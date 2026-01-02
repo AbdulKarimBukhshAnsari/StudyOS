@@ -1,18 +1,10 @@
 'use client';
-import { motion } from "framer-motion";
-import { Github, Twitter, Linkedin, Mail } from "lucide-react";
-import Link from "next/link";
+
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { FOOTER } from '@/constants';
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
-  const socialLinks = [
-    { icon: Github, href: "#", label: "GitHub" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Mail, href: "#", label: "Email" },
-  ];
-
   return (
     <footer className="bg-muted/30 border-t border-border">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -26,13 +18,14 @@ export function Footer() {
           >
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">S</span>
+                <span className="text-primary-foreground font-bold text-lg">
+                  {FOOTER.brand.logo}
+                </span>
               </div>
-              <span className="text-xl font-semibold">StudyOS</span>
+              <span className="text-xl font-semibold">{FOOTER.brand.name}</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Your academic operating system. Simplify learning, track progress, and
-              optimize study habits.
+              {FOOTER.brand.description}
             </p>
           </motion.div>
 
@@ -45,30 +38,16 @@ export function Footer() {
           >
             <h3 className="font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="#features"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Features
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#problem"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Problem Statement
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/register"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Get Started
-                </Link>
-              </li>
+              {FOOTER.quickLinks.map((link) => (
+                <li key={link.text}>
+                  <Link
+                    href={link.href}
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {link.text}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </motion.div>
 
@@ -81,7 +60,7 @@ export function Footer() {
           >
             <h3 className="font-semibold mb-4">Connect</h3>
             <div className="flex gap-4">
-              {socialLinks.map((social, index) => {
+              {FOOTER.socialLinks.map((social, index) => {
                 const Icon = social.icon;
                 return (
                   <motion.a
@@ -113,12 +92,12 @@ export function Footer() {
           className="pt-8 border-t border-border text-center text-sm text-muted-foreground"
         >
           <p>
-            © {currentYear} StudyOS. All rights reserved.
+            © {FOOTER.copyright.year} {FOOTER.copyright.text}
           </p>
           <p className="mt-2">
-            Created by{" "}
+            Created by{' '}
             <span className="font-semibold text-foreground">
-              Abdul Karim Bukhsh Ansari
+              {FOOTER.author.name}
             </span>
           </p>
         </motion.div>
@@ -126,4 +105,3 @@ export function Footer() {
     </footer>
   );
 }
-

@@ -1,20 +1,12 @@
-
 'use client';
-import { motion } from "framer-motion";
-import { CheckCircle2, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
+import { motion } from 'framer-motion';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { SOLUTION_OVERVIEW } from '@/constants';
 
 export function SolutionOverview() {
-  const benefits = [
-    "Organize learning with structured academic hierarchy",
-    "Track progress with visual dashboards",
-    "Generate flashcards and quizzes with AI assistance",
-    "Plan revision strategically before exams",
-    "Reduce cognitive load with minimalistic design",
-    "Access everything in one unified workspace",
-  ];
-
   return (
     <section className="py-24 bg-gradient-to-br from-primary/5 via-background to-primary/5">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,17 +20,14 @@ export function SolutionOverview() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl sm:text-5xl font-bold mb-6">
-                The StudyOS Solution
+                {SOLUTION_OVERVIEW.title}
               </h2>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                StudyOS solves this problem by acting as an academic operating system
-                for students. Instead of asking students to &quot;learn more,&quot; StudyOS helps
-                them organize, revise, test, and track learning continuously throughout
-                the semester.
+                {SOLUTION_OVERVIEW.description}
               </p>
 
               <div className="space-y-4 mb-8">
-                {benefits.map((benefit, index) => (
+                {SOLUTION_OVERVIEW.benefits.map((benefit, index) => (
                   <motion.div
                     key={benefit}
                     initial={{ opacity: 0, x: -20 }}
@@ -60,8 +49,8 @@ export function SolutionOverview() {
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
                 <Button size="lg" asChild className="group">
-                  <Link href="/register">
-                    Start Your Journey
+                  <Link href={SOLUTION_OVERVIEW.cta.href}>
+                    {SOLUTION_OVERVIEW.cta.text}
                     <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
@@ -104,7 +93,7 @@ export function SolutionOverview() {
                   transition={{
                     duration: 3,
                     repeat: Infinity,
-                    ease: "easeInOut",
+                    ease: 'easeInOut',
                   }}
                   className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center"
                 >
@@ -117,7 +106,7 @@ export function SolutionOverview() {
                   transition={{
                     duration: 2.5,
                     repeat: Infinity,
-                    ease: "easeInOut",
+                    ease: 'easeInOut',
                     delay: 0.5,
                   }}
                   className="absolute -bottom-4 -left-4 w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center"
@@ -132,4 +121,3 @@ export function SolutionOverview() {
     </section>
   );
 }
-
