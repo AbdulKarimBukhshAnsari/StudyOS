@@ -1,23 +1,22 @@
 
 import { pgTable, uuid, text, varchar, boolean, date, integer, jsonb, timestamp, pgEnum } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+import { user as betterAuthUser } from "./auth-schema";
 
 // Enum for topic status
 export const topicStatusEnum = pgEnum('topic_status', ['Not Clear', 'Somewhat Clear', 'Clear']);
 
-// User table
+// User profile table - 1-1 relationship with Better Auth user table
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
-  name: text('name').notNull(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  password: text('password').notNull(),
+  better_auth_user_id: text('better_auth_user_id').notNull().unique().references(() => betterAuthUser.id, { onDelete: 'cascade' }),
   created_at: timestamp('created_at').defaultNow().notNull(),
 });
 
 // Semester table
 export const semesters = pgTable('semesters', {
   id: uuid('id').defaultRandom().primaryKey(),
-  user_id: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  user_id: text('user_id').notNull().references(() => betterAuthUser.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 255 }).notNull(),
   start_date: date('start_date').notNull(),
   end_date: date('end_date').notNull(),
@@ -98,22 +97,24 @@ export const quizzes = pgTable('quizzes', {
 export const quizResults = pgTable('quiz_results', {
   id: uuid('id').defaultRandom().primaryKey(),
   quiz_id: uuid('quiz_id').notNull().references(() => quizzes.id, { onDelete: 'cascade' }),
-  user_id: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  user_id: text('user_id').notNull().references(() => betterAuthUser.id, { onDelete: 'cascade' }),
   score: integer('score').notNull(),
   answers: jsonb('answers').$type<QuizAnswer[]>().notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
 });
 
 // Relations
-export const usersRelations = relations(users, ({ many }) => ({
-  semesters: many(semesters),
-  quizResults: many(quizResults),
+export const usersRelations = relations(users, ({ one }) => ({
+  betterAuthUser: one(betterAuthUser, {
+    fields: [users.better_auth_user_id],
+    references: [betterAuthUser.id],
+  }),
 }));
 
 export const semestersRelations = relations(semesters, ({ one, many }) => ({
-  user: one(users, {
+  user: one(betterAuthUser, {
     fields: [semesters.user_id],
-    references: [users.id],
+    references: [betterAuthUser.id],
   }),
   subjects: many(subjects),
 }));
@@ -171,9 +172,9 @@ export const quizResultsRelations = relations(quizResults, ({ one }) => ({
     fields: [quizResults.quiz_id],
     references: [quizzes.id],
   }),
-  user: one(users, {
+  user: one(betterAuthUser, {
     fields: [quizResults.user_id],
-    references: [users.id],
+    references: [betterAuthUser.id],
   }),
 }));
         
