@@ -1,11 +1,21 @@
-import { Header } from "@/components/Header";
-import { Hero } from "@/components/Hero";
-import { ProblemStatement } from "@/components/ProblemStatement";
-import { Features } from "@/components/Features";
-import { SolutionOverview } from "@/components/SolutionOverview";
-import { Footer } from "@/components/Footer";
+import { redirect } from 'next/navigation';
+import { getCurrentUser } from '@/lib/auth-server';
+import { ROUTES } from '@/constants/routes';
+import { Header } from "@/components/HomePage/Header";
+import { Hero } from "@/components/HomePage/Hero";
+import { ProblemStatement } from "@/components/HomePage/ProblemStatement";
+import { Features } from "@/components/HomePage/Features";
+import { SolutionOverview } from "@/components/HomePage/SolutionOverview";
+import { Footer } from "@/components/HomePage/Footer";
 
-export default function Home() {
+export default async function Home() {
+  // If user is authenticated, redirect to dashboard
+  // This is handled by middleware, but adding as a safety check
+  const user = await getCurrentUser();
+  if (user) {
+    redirect(ROUTES.private.dashboard);
+  }
+
   return (
     <div className="min-h-screen">
       <Header />
