@@ -1,9 +1,9 @@
-import { Header } from "@/components/Header";
-import { Hero } from "@/components/Hero";
-import { ProblemStatement } from "@/components/ProblemStatement";
-import { Features } from "@/components/Features";
-import { SolutionOverview } from "@/components/SolutionOverview";
-import { Footer } from "@/components/Footer";
+import { Header } from "@/components/HomePage/Header";
+import { Hero } from "@/components/HomePage/Hero";
+import { ProblemStatement } from "@/components/HomePage/ProblemStatement";
+import { Features } from "@/components/HomePage/Features";
+import { SolutionOverview } from "@/components/HomePage/SolutionOverview";
+import { Footer } from "@/components/HomePage/Footer";
 
 export default function Home() {
   return (
