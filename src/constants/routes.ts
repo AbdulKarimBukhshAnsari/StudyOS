@@ -1,0 +1,51 @@
+/**
+ * Application route constants
+ * Centralized definition of public and private routes
+ */
+
+export const ROUTES = {
+  // Public routes (accessible without authentication)
+  public: {
+    home: '/',
+    login: '/login',
+    register: '/register',
+    forgotPassword: '/forgot-password',
+  },
+  // Private routes (require authentication)
+  private: {
+    dashboard: '/dashboard',
+  },
+} as const;
+
+/**
+ * Check if a path is a public route
+ */
+export function isPublicRoute(pathname: string): boolean {
+  return Object.values(ROUTES.public).some((route) => {
+    if (route === '/') {
+      return pathname === '/';
+    }
+    return pathname.startsWith(route);
+  });
+}
+
+/**
+ * Check if a path is a private route
+ */
+export function isPrivateRoute(pathname: string): boolean {
+  return Object.values(ROUTES.private).some((route) =>
+    pathname.startsWith(route)
+  );
+}
+
+/**
+ * Check if a path is an auth page (login, register, forgot-password)
+ */
+export function isAuthPage(pathname: string): boolean {
+  return (
+    pathname.startsWith(ROUTES.public.login) ||
+    pathname.startsWith(ROUTES.public.register) ||
+    pathname.startsWith(ROUTES.public.forgotPassword)
+  );
+}
+

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth-server';
+import { ROUTES } from '@/constants/routes';
 import { Header } from "@/components/HomePage/Header";
 import { Hero } from "@/components/HomePage/Hero";
 import { ProblemStatement } from "@/components/HomePage/ProblemStatement";
@@ -12,7 +13,7 @@ export default async function Home() {
   // This is handled by middleware, but adding as a safety check
   const user = await getCurrentUser();
   if (user) {
-    redirect('/dashboard');
+    redirect(ROUTES.private.dashboard);
   }
 
   return (

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth-server';
+import { ROUTES } from '@/constants/routes';
 import { BookOpen, FileText, Brain, GraduationCap } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import Link from 'next/link';
@@ -10,7 +11,7 @@ export default async function DashboardPage() {
 
   // This should be handled by middleware, but adding as a safety check
   if (!user) {
-    redirect('/login');
+    redirect(ROUTES.public.login);
   }
 
   return (

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
+import { ROUTES, isAuthPage, isPrivateRoute } from '@/constants/routes';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -12,23 +13,23 @@ export async function middleware(request: NextRequest) {
     });
 
     const isAuthenticated = !!session?.user;
-    const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register') || pathname.startsWith('/forgot-password');
-    const isDashboard = pathname.startsWith('/dashboard');
-    const isRoot = pathname === '/';
+    const isAuth = isAuthPage(pathname);
+    const isDashboard = isPrivateRoute(pathname);
+    const isRoot = pathname === ROUTES.public.home;
 
     // If user is authenticated and tries to access auth pages, redirect to dashboard
-    if (isAuthenticated && isAuthPage) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+    if (isAuthenticated && isAuth) {
+      return NextResponse.redirect(new URL(ROUTES.private.dashboard, request.url));
     }
 
     // If user is not authenticated and tries to access dashboard, redirect to login
     if (!isAuthenticated && isDashboard) {
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL(ROUTES.public.login, request.url));
     }
 
     // If user is authenticated and on root, redirect to dashboard
     if (isAuthenticated && isRoot) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+      return NextResponse.redirect(new URL(ROUTES.private.dashboard, request.url));
     }
   } catch (error) {
     // If there's an error checking session, allow the request to continue

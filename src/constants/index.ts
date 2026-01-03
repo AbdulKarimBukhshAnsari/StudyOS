@@ -1,8 +1,6 @@
-// Export all constants from individual files
-export * from './header';
-export * from './hero';
-export * from './problemStatement';
-export * from './features';
-export * from './solutionOverview';
-export * from './footer';
+// Export all homepage constants from consolidated file
+export * from './homePage';
+
+// Export route constants
+export * from './routes';
 

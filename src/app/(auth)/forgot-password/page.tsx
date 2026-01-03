@@ -1,4 +1,5 @@
 import { AuthCard } from '@/components/auth/AuthCard';
+import { ROUTES } from '@/constants/routes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -34,7 +35,7 @@ export default function ForgotPasswordPage() {
 
         <div className="text-center">
           <Link
-            href="/login"
+            href={ROUTES.public.login}
             className="text-sm text-primary hover:underline"
           >
             Back to login

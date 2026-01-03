@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { User, Mail, Lock, Loader2 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
+import { ROUTES } from '@/constants/routes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -53,7 +54,7 @@ export function RegisterForm() {
       if (result.error) {
         setError(result.error.message || 'Registration failed. Please try again.');
       } else {
-        router.push('/dashboard');
+        router.push(ROUTES.private.dashboard);
         router.refresh();
       }
     } catch {
@@ -193,7 +194,7 @@ export function RegisterForm() {
         size="lg"
         asChild
       >
-        <Link href="/login">Sign In</Link>
+        <Link href={ROUTES.public.login}>Sign In</Link>
       </Button>
     </form>
   );

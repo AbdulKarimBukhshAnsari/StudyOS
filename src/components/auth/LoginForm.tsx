@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
+import { ROUTES } from '@/constants/routes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -35,7 +36,7 @@ export function LoginForm() {
       if (result.error) {
         setError(result.error.message || 'Invalid email or password');
       } else {
-        router.push('/dashboard');
+        router.push(ROUTES.private.dashboard);
         router.refresh();
       }
     } catch {
@@ -84,7 +85,7 @@ export function LoginForm() {
         <div className="flex items-center justify-between">
           <Label htmlFor="password">Password</Label>
           <Link
-            href="/forgot-password"
+            href={ROUTES.public.forgotPassword}
             className="text-sm text-primary hover:underline"
           >
             Forgot password?
@@ -139,7 +140,7 @@ export function LoginForm() {
         size="lg"
         asChild
       >
-        <Link href="/register">Create Account</Link>
+        <Link href={ROUTES.public.register}>Create Account</Link>
       </Button>
     </form>
   );
