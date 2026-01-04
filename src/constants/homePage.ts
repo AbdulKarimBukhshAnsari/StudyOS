@@ -65,7 +65,7 @@ export const HOMEPAGE = {
   problemStatement: {
     title: 'The Problem Students Face',
     description:
-      'Across the world, students at every level face the same fundamental problem: information overload without clarity or structure. Most students struggle not because content is unavailable, but because they don&apos;t know what to study, how to revise, and how to track real understanding.',
+      "Across the world, students at every level face the same fundamental problem: information overload without clarity or structure. Most students struggle not because content is unavailable, but because they don't know what to study, how to revise, and how to track real understanding.",
     problems: [
       {
         icon: FileText,
@@ -83,7 +83,7 @@ export const HOMEPAGE = {
         icon: BookMarked,
         title: 'No Academic Context',
         description:
-          'AI tools generate content but don&apos;t understand your semester, subjects, progress, or revision needs.',
+          "AI tools generate content but don't understand your semester, subjects, progress, or revision needs.",
       },
       {
         icon: AlertCircle,

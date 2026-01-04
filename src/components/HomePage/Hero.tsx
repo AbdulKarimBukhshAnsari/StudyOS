@@ -1,160 +1,200 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, useMotionTemplate, useMotionValue } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { HERO } from '@/constants';
+import { MouseEvent, useRef } from 'react';
+import { FileText, Sparkles, Brain, Zap, LucideIcon } from 'lucide-react';
+
+const RotatingIcon = ({ icon: Icon, delay, x, y, rotate, duration }: { icon: LucideIcon, delay: number, x: number[], y: number[], rotate: number[], duration: number }) => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0 }}
+    animate={{
+      opacity: [0.3, 0.6, 0.3],
+      scale: [1, 1.2, 1],
+      x,
+      y,
+      rotate
+    }}
+    transition={{
+      duration,
+      repeat: Infinity,
+      ease: "linear",
+      delay
+    }}
+    className="absolute text-primary/20 pointer-events-none z-0"
+  >
+    <Icon size={48} />
+  </motion.div>
+);
 
 export function Hero() {
-  return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-32">
-      {/* Enhanced animated background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,0,0,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.05),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(0,0,0,0.03),transparent_50%)] dark:bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.03),transparent_50%)]" />
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"]
+  });
+  
+  // Smooth spring animations for parallax effect
+  const y1 = useSpring(useTransform(scrollYProgress, [0, 1], [0, 150]), {
+    stiffness: 100,
+    damping: 30
+  });
+  const y2 = useSpring(useTransform(scrollYProgress, [0, 1], [0, -100]), {
+    stiffness: 100,
+    damping: 30
+  });
+  
+  // Opacity fade on scroll
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0.3]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
+  
+  // Opacity for features and CTA on scroll
+  const featuresOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7], [1, 1, 0.5]);
+  const ctaOpacity = useTransform(scrollYProgress, [0, 0.4, 0.8], [1, 1, 0.4]);
 
-      {/* Animated grid pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-40" />
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  return (
+    <section
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      className="relative min-h-[100vh] flex items-center justify-center overflow-hidden bg-background pt-20"
+    >
+      {/* Spotlight Effect */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              650px circle at ${mouseX}px ${mouseY}px,
+              rgba(14, 165, 233, 0.15),
+              transparent 80%
+            )
+          `,
+        }}
+      />
+
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background" />
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+
+      {/* Floating Icons Background */}
+      <RotatingIcon icon={Brain} delay={0} x={[0, 50, -50, 0]} y={[0, -50, 50, 0]} rotate={[0, 180, 360]} duration={12} />
+      <RotatingIcon icon={Sparkles} delay={2} x={[100, 150, 50, 100]} y={[100, 50, 150, 100]} rotate={[360, 180, 0]} duration={14} />
+      <RotatingIcon icon={FileText} delay={4} x={[-100, -150, -50, -100]} y={[-50, -100, 0, -50]} rotate={[0, -180, -360]} duration={13} />
+      <RotatingIcon icon={Zap} delay={1} x={[200, 100, 200]} y={[-100, -200, -100]} rotate={[0, 90, 180]} duration={11} />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-5xl mx-auto text-center">
-          {/* Main heading with improved styling */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="mb-8"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-block mb-6"
-            >
-              <span className="text-sm sm:text-base font-semibold text-primary px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-                Academic Productivity Platform
-              </span>
-            </motion.div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 leading-[1.1] tracking-tight">
-              <span className="block bg-gradient-to-r from-foreground via-foreground/95 to-foreground/80 bg-clip-text text-transparent">
-                {HERO.title.line1}
-              </span>
-              <span className="block mt-2 bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
-                {HERO.title.line2}
-              </span>
-            </h1>
-
-            <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light">
-              {HERO.description}
-            </p>
-          </motion.div>
-
-          {/* Feature badges with improved design */}
+          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
-            className="flex flex-wrap items-center justify-center gap-3 mb-12"
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-8 backdrop-blur-md"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            Academic Productivity Reimagined
+          </motion.div>
+
+          {/* Main Title with Gradient and Glow */}
+          <motion.div
+            style={{ y: y1, opacity, scale }}
+            className="relative z-20"
+          >
+            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight mb-8">
+              <span className="block text-foreground drop-shadow-sm">
+                {HERO.title.line1}
+              </span>
+              <span className="block bg-gradient-to-r from-blue-400 via-primary to-purple-400 bg-clip-text text-transparent pb-4 animate-gradient bg-300%">
+                {HERO.title.line2}
+              </span>
+            </h1>
+          </motion.div>
+
+          {/* Description with Blur Reveal */}
+          <motion.p
+            initial={{ opacity: 0, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            style={{ y: y2, opacity }}
+            className="text-lg sm:text-xl lg:text-2xl text-muted-foreground/80 max-w-3xl mx-auto leading-relaxed mb-12"
+          >
+            {HERO.description}
+          </motion.p>
+
+          {/* Features Grid - 3D Tilt Cards */}
+          <motion.div 
+            style={{ opacity: featuresOpacity }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16"
           >
             {HERO.features.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <motion.div
                   key={feature.text}
-                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: 0.4 + index * 0.1,
-                    type: 'spring',
-                    stiffness: 200,
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 + index * 0.1 }}
+                  whileHover={{
+                    scale: 1.05,
+                    rotateX: 5,
+                    rotateY: 5,
+                    backgroundColor: "rgba(var(--primary), 0.1)"
                   }}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  className="group flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-card/80 backdrop-blur-sm border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all"
+                  className="flex flex-col items-center gap-3 p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-white/5 shadow-2xl transition-colors"
                 >
-                  <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                    <Icon className="w-4 h-4 text-primary" />
+                  <div className="p-3 rounded-full bg-primary/10 text-primary">
+                    <Icon className="w-6 h-6" />
                   </div>
-                  <span className="text-sm font-medium">{feature.text}</span>
+                  <span className="font-semibold text-sm">{feature.text}</span>
                 </motion.div>
-              );
+              )
             })}
           </motion.div>
 
-          {/* CTA buttons with improved styling */}
+          {/* CTA Buttons with Glow */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+            transition={{ delay: 0.6 }}
+            style={{ opacity: ctaOpacity }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
             <Button
               size="lg"
               asChild
-              className="text-base px-8 py-4 h-auto shadow-lg hover:shadow-xl transition-all group"
+              className="text-lg h-14 px-8 rounded-full bg-primary hover:bg-primary/90 shadow-[0_0_40px_-10px_rgba(var(--primary),0.3)] hover:shadow-[0_0_60px_-15px_rgba(var(--primary),0.5)] transition-all duration-300"
             >
               <Link href={HERO.cta.primary.href}>
                 {HERO.cta.primary.text}
-                <motion.span
-                  className="ml-2 inline-block"
-                  animate={{ x: [0, 4, 0] }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
-                >
-                  →
-                </motion.span>
               </Link>
             </Button>
             <Button
               size="lg"
               variant="outline"
               asChild
-              className="text-base px-8 py-4 h-auto border-2 hover:bg-accent/50 transition-all"
+              className="text-lg h-14 px-8 rounded-full border-primary/20 hover:bg-primary/5 hover:border-primary/40 backdrop-blur-sm transition-all"
             >
               <Link href={HERO.cta.secondary.href}>{HERO.cta.secondary.text}</Link>
             </Button>
           </motion.div>
-
-          {/* Enhanced scroll indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.8 }}
-            className="relative"
-          >
-            <div className="w-full max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 bg-background"
-            >
-              <span className="text-xs sm:text-sm text-muted-foreground font-medium flex items-center gap-2">
-                <span>{HERO.scrollIndicator.text}</span>
-                <motion.span
-                  animate={{ y: [0, 4, 0] }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                    delay: 0.2,
-                  }}
-                  className="inline-block"
-                >
-                  ↓
-                </motion.span>
-              </span>
-            </motion.div>
-          </motion.div>
         </div>
       </div>
+
     </section>
   );
 }
