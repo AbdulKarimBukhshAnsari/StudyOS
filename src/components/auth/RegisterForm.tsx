@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from './PasswordInput';
-import { cn } from '@/lib/utils';
 
 export function RegisterForm() {
   const router = useRouter();
@@ -55,6 +54,21 @@ export function RegisterForm() {
       if (result.error) {
         setError(result.error.message || 'Registration failed. Please try again.');
       } else {
+        // Create user record in the users table
+        try {
+          const createUserResponse = await fetch('/api/users/create', {
+            method: 'POST',
+            credentials: 'include',
+          });
+          
+          if (!createUserResponse.ok) {
+            console.error('Failed to create user record:', await createUserResponse.text());
+          }
+        } catch (error) {
+          console.error('Error creating user record:', error);
+          // Don't block the signup flow if this fails
+        }
+        
         router.push(ROUTES.private.dashboard);
         router.refresh();
       }
