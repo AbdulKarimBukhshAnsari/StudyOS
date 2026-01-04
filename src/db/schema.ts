@@ -10,6 +10,7 @@ export const topicStatusEnum = pgEnum('topic_status', ['Not Clear', 'Somewhat Cl
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
   better_auth_user_id: text('better_auth_user_id').notNull().unique().references(() => betterAuthUser.id, { onDelete: 'cascade' }),
+  is_onboarded: boolean('is_onboarded').default(false).notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -20,7 +21,7 @@ export const semesters = pgTable('semesters', {
   name: varchar('name', { length: 255 }).notNull(),
   start_date: date('start_date').notNull(),
   end_date: date('end_date').notNull(),
-  is_active: boolean('is_active').default(false).notNull(),
+  is_active: boolean('is_active').default(true).notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
 });
 

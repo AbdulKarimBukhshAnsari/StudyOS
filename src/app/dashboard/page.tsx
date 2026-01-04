@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth-server';
 import { ROUTES } from '@/constants/routes';
+import { checkOnBoardingStatus } from '@/serverActions/auth/action';
 import { BookOpen, FileText, Brain, GraduationCap } from 'lucide-react';
-import { SignOutButton } from '@/components/auth/SignOutButton';
+import { SignOutButton } from '@/components/Auth/SignOutButton';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -12,6 +13,12 @@ export default async function DashboardPage() {
   // This should be handled by middleware, but adding as a safety check
   if (!user) {
     redirect(ROUTES.public.login);
+  }
+
+  // Check if user is onboarded, if not redirect to onboarding
+  const isOnboarded = await checkOnBoardingStatus();
+  if (!isOnboarded) {
+    redirect(`${ROUTES.private.onboarding}/step1`);
   }
 
   return (
