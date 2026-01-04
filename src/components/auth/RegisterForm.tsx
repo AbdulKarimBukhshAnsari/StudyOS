@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from './PasswordInput';
+import { cn } from '@/lib/utils';
 
 export function RegisterForm() {
   const router = useRouter();
@@ -67,7 +68,7 @@ export function RegisterForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
+
     if (name === 'confirmPassword' || name === 'password') {
       setPasswordMismatch(false);
       setError(null);
