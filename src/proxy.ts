@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
 import { ROUTES, isAuthPage, isPrivateRoute } from '@/constants/routes';
+import { checkOnBoardingStatus } from './serverActions/auth/action';
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -14,21 +15,49 @@ export async function proxy(request: NextRequest) {
 
     const isAuthenticated = !!session?.user;
     const isAuth = isAuthPage(pathname);
-    const isDashboard = isPrivateRoute(pathname);
+    const isDashboard = isPrivateRoute(pathname) && pathname.startsWith(ROUTES.private.dashboard);
+    const isOnboarding = pathname.startsWith(ROUTES.private.onboarding);
     const isRoot = pathname === ROUTES.public.home;
 
-    // If user is authenticated and tries to access auth pages, redirect to dashboard
-    if (isAuthenticated && isAuth) {
-      return NextResponse.redirect(new URL(ROUTES.private.dashboard, request.url));
+    // Check onboarding status once for authenticated users
+    let isOnboarded = false;
+    if (isAuthenticated) {
+      try {
+        isOnboarded = await checkOnBoardingStatus();
+      } catch {
+        // If check fails, allow access to continue
+      }
     }
 
-    // If user is not authenticated and tries to access dashboard, redirect to login
-    if (!isAuthenticated && isDashboard) {
+    // If user is authenticated and onboarded, redirect from login/root/onboarding to dashboard
+    if (isAuthenticated && isOnboarded) {
+      if (isAuth || isRoot || isOnboarding) {
+        return NextResponse.redirect(new URL(ROUTES.private.dashboard, request.url));
+      }
+    }
+
+    // If user is authenticated and tries to access auth pages but not onboarded, redirect to onboarding
+    if (isAuthenticated && isAuth && !isOnboarded) {
+      return NextResponse.redirect(new URL(`${ROUTES.private.onboarding}/step1`, request.url));
+    }
+
+    // If user is not authenticated and tries to access dashboard or onboarding, redirect to login
+    if (!isAuthenticated && (isDashboard || isOnboarding)) {
       return NextResponse.redirect(new URL(ROUTES.public.login, request.url));
     }
 
-    // If user is authenticated and on root, redirect to dashboard
-    if (isAuthenticated && isRoot) {
+    // If user is authenticated but not onboarded and tries to access dashboard, redirect to onboarding
+    if (isAuthenticated && isDashboard && !isOnboarded) {
+      return NextResponse.redirect(new URL(`${ROUTES.private.onboarding}/step1`, request.url));
+    }
+
+    // If user is authenticated and on root but not onboarded, redirect to onboarding
+    if (isAuthenticated && isRoot && !isOnboarded) {
+      return NextResponse.redirect(new URL(`${ROUTES.private.onboarding}/step1`, request.url));
+    }
+
+    // If user is authenticated and on root and onboarded, redirect to dashboard
+    if (isAuthenticated && isRoot && isOnboarded) {
       return NextResponse.redirect(new URL(ROUTES.private.dashboard, request.url));
     }
   } catch (error) {

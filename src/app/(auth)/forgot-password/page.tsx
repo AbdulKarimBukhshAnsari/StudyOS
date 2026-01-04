@@ -1,4 +1,4 @@
-import { AuthCard } from '@/components/auth/AuthCard';
+import { AuthCard } from '@/components/Auth/AuthCard';
 import { ROUTES } from '@/constants/routes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

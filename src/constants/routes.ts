@@ -14,6 +14,7 @@ export const ROUTES = {
   // Private routes (require authentication)
   private: {
     dashboard: '/dashboard',
+    onboarding: '/onboarding',
   },
 } as const;
 

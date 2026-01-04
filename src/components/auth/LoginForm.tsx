@@ -1,9 +1,8 @@
 'use client';
 
-import * as React from 'react';
+import {useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 import { ROUTES } from '@/constants/routes';
@@ -11,13 +10,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from './PasswordInput';
-import { cn } from '@/lib/utils';
 
 export function LoginForm() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [formData, setFormData] = React.useState({
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
@@ -36,10 +33,11 @@ export function LoginForm() {
       if (result.error) {
         setError(result.error.message || 'Invalid email or password');
       } else {
-        router.push(ROUTES.private.dashboard);
-        router.refresh();
+        await new Promise(resolve => setTimeout(resolve, 300));
+        window.location.href = ROUTES.private.dashboard;
       }
-    } catch {
+    } catch (error) {
+      console.error('Login error:', error);
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);

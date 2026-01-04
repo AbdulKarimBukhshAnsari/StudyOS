@@ -1,0 +1,1 @@
+ALTER TABLE "semesters" ALTER COLUMN "is_active" SET DEFAULT true;

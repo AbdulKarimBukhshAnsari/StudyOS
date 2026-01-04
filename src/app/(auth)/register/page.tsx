@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth-server';
 import { ROUTES } from '@/constants/routes';
-import { AuthCard } from '@/components/auth/AuthCard';
-import { RegisterForm } from '@/components/auth/RegisterForm';
+import { AuthCard } from '@/components/Auth/AuthCard';
+import { RegisterForm } from '@/components/Auth/RegisterForm';
 
 export default async function RegisterPage() {
   // If user is already authenticated, redirect to dashboard

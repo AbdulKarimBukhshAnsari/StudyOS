@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import {useState}  from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -11,19 +11,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from './PasswordInput';
-import { cn } from '@/lib/utils';
 
 export function RegisterForm() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [formData, setFormData] = React.useState({
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const [passwordMismatch, setPasswordMismatch] = React.useState(false);
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,8 +54,24 @@ export function RegisterForm() {
       if (result.error) {
         setError(result.error.message || 'Registration failed. Please try again.');
       } else {
-        router.push(ROUTES.private.dashboard);
-        router.refresh();
+        // Create user record in the users table
+        try {
+          const createUserResponse = await fetch('/api/users/create', {
+            method: 'POST',
+            credentials: 'include',
+          });
+          
+          if (!createUserResponse.ok) {
+            console.error('Failed to create user record:', await createUserResponse.text());
+          }
+        } catch (error) {
+          console.error('Error creating user record:', error);
+        }
+        
+      
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        window.location.href = ROUTES.private.dashboard;
       }
     } catch {
       setError('An unexpected error occurred. Please try again.');
