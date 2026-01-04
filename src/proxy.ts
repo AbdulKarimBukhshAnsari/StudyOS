@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
 import { ROUTES, isAuthPage, isPrivateRoute } from '@/constants/routes';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   try {
