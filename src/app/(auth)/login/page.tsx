@@ -2,8 +2,8 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth-server';
 import { ROUTES } from '@/constants/routes';
 import { checkOnBoardingStatus } from '@/serverActions/auth/action';
-import { AuthCard } from '@/components/Auth/AuthCard';
-import { LoginForm } from '@/components/Auth/LoginForm';
+import { AuthCard } from '@/components/auth/AuthCard';
+import { LoginForm } from '@/components/auth/LoginForm';
 
 export default async function LoginPage() {
   // If user is already authenticated, redirect based on onboarding status
