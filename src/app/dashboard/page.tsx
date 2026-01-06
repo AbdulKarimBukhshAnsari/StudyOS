@@ -3,7 +3,7 @@ import { getCurrentUser } from '@/lib/auth-server';
 import { ROUTES } from '@/constants/routes';
 import { checkOnBoardingStatus } from '@/serverActions/auth/action';
 import { BookOpen, FileText, Brain, GraduationCap } from 'lucide-react';
-import { SignOutButton } from '@/components/Auth/SignOutButton';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
