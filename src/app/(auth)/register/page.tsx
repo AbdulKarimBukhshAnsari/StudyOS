@@ -1,15 +1,10 @@
-import { redirect } from 'next/navigation';
-import { getCurrentUser } from '@/lib/auth-server';
-import { ROUTES } from '@/constants/routes';
+import { redirectBasedOnOnboardingStatus } from '@/utils/auth';
 import { AuthCard } from '@/components/auth/AuthCard';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 
 export default async function RegisterPage() {
-  // If user is already authenticated, redirect to dashboard
-  const user = await getCurrentUser();
-  if (user) {
-    redirect(ROUTES.private.dashboard);
-  }
+  // If user is already authenticated, redirect based on onboarding status
+  await redirectBasedOnOnboardingStatus();
 
   return (
     <AuthCard

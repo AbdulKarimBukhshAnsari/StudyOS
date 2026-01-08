@@ -1,7 +1,4 @@
-import { redirect } from 'next/navigation';
-import { getCurrentUser } from '@/lib/auth-server';
-import { ROUTES } from '@/constants/routes';
-import { checkOnBoardingStatus } from '@/serverActions/auth/action';
+import { requireAuthAndOnboarding } from '@/utils/auth';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 
 export default async function DashboardLayout({
@@ -9,18 +6,8 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
-
-  // This should be handled by middleware, but adding as a safety check
-  if (!user) {
-    redirect(ROUTES.public.login);
-  }
-
-  // Check if user is onboarded, if not redirect to onboarding
-  const isOnboarded = await checkOnBoardingStatus();
-  if (!isOnboarded) {
-    redirect(`${ROUTES.private.onboarding}/step1`);
-  }
+  // Ensure user is authenticated and onboarded
+  await requireAuthAndOnboarding();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">

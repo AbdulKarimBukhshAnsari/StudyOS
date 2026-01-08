@@ -14,7 +14,15 @@ export const ROUTES = {
   // Private routes (require authentication)
   private: {
     dashboard: '/dashboard',
-    onboarding: '/onboarding',
+    dashboardSemester: '/dashboard/semester',
+    dashboardCalendar: '/dashboard/calendar',
+    dashboardProfile: '/dashboard/profile',
+    onboarding: {
+      base: '/onboarding',
+      step1: '/onboarding/step1',
+      step2: '/onboarding/step2',
+      step3: '/onboarding/step3',
+    },
   },
 } as const;
 
@@ -34,8 +42,9 @@ export function isPublicRoute(pathname: string): boolean {
  * Check if a path is a private route
  */
 export function isPrivateRoute(pathname: string): boolean {
-  return Object.values(ROUTES.private).some((route) =>
-    pathname.startsWith(route)
+  return (
+    pathname.startsWith(ROUTES.private.dashboard) ||
+    pathname.startsWith(ROUTES.private.onboarding.base)
   );
 }
 

@@ -12,32 +12,33 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { ROUTES } from '@/constants/routes';
 
 const navigation = [
   {
     name: 'Dashboard',
-    href: '/dashboard',
+    href: ROUTES.private.dashboard,
     icon: LayoutDashboard,
     color: 'from-blue-500 to-blue-600',
     hoverColor: 'hover:from-blue-600 hover:to-blue-700',
   },
   {
     name: 'Semester',
-    href: '/dashboard/semester',
+    href: ROUTES.private.dashboardSemester,
     icon: GraduationCap,
     color: 'from-purple-500 to-purple-600',
     hoverColor: 'hover:from-purple-600 hover:to-purple-700',
   },
   {
     name: 'Calendar',
-    href: '/dashboard/calendar',
+    href: ROUTES.private.dashboardCalendar,
     icon: Calendar,
     color: 'from-green-500 to-green-600',
     hoverColor: 'hover:from-green-600 hover:to-green-700',
   },
   {
     name: 'Profile',
-    href: '/dashboard/profile',
+    href: ROUTES.private.dashboardProfile,
     icon: User,
     color: 'from-orange-500 to-orange-600',
     hoverColor: 'hover:from-orange-600 hover:to-orange-700',
@@ -93,7 +94,7 @@ export function DashboardSidebar() {
           <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             {navigation.map((item) => {
               const isActive = pathname === item.href || 
-                (item.href !== '/dashboard' && pathname.startsWith(item.href));
+                (item.href !== ROUTES.private.dashboard && pathname.startsWith(item.href));
               const Icon = item.icon;
 
               return (

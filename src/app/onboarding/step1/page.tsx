@@ -10,7 +10,7 @@ export default function OnboardingStep1() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push(`${ROUTES.private.onboarding}/step2`);
+    router.push(ROUTES.private.onboarding.step2);
   };
 
   return (

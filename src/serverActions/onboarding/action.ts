@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { semesters, subjects } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth-server";
 import { markUserAsOnboarded } from "@/serverActions/auth/action";
+import { formatDateForInput } from "@/utils/date";
 
 type OnboardingData = {
   semesterName: string;
@@ -26,8 +27,8 @@ export const completeOnboarding = async (data: OnboardingData) => {
       .values({
         user_id: user.id,
         name: data.semesterName,
-        start_date: data.semesterStartDate.toISOString().split('T')[0], // Convert to YYYY-MM-DD
-        end_date: data.semesterEndDate.toISOString().split('T')[0], // Convert to YYYY-MM-DD
+        start_date: formatDateForInput(data.semesterStartDate),
+        end_date: formatDateForInput(data.semesterEndDate),
         is_active: true,
       })
       .returning();
