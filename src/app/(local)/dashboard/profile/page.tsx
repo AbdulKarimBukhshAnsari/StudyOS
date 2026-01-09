@@ -15,26 +15,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 
 export default async function ProfilePage() {
   const user = await getCurrentUser();
 
   return (
     <div className="h-full">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent flex items-center gap-2">
-              <User className="h-6 w-6" />
-              Profile
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Manage your account settings and preferences
-            </p>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader
+        title={
+          <span className="bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent flex items-center gap-2">
+            <User className="h-6 w-6" />
+            Profile
+          </span>
+        }
+        subtitle="Manage your account settings and preferences"
+      />
 
       {/* Main Content */}
       <div className="p-6">

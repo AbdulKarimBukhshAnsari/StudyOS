@@ -12,37 +12,33 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 
 export default function CalendarPage() {
   return (
     <div className="h-full">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent flex items-center gap-2">
-                <CalendarIcon className="h-6 w-6" />
-                Calendar
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                View your schedule, deadlines, and important dates
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">
-                Month
-              </Button>
-              <Button variant="outline" size="sm">
-                Week
-              </Button>
-              <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" size="sm">
-                Today
-              </Button>
-            </div>
+      <DashboardHeader
+        title={
+          <span className="bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent flex items-center gap-2">
+            <CalendarIcon className="h-6 w-6" />
+            Calendar
+          </span>
+        }
+        subtitle="View your schedule, deadlines, and important dates"
+        action={
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm">
+              Month
+            </Button>
+            <Button variant="outline" size="sm">
+              Week
+            </Button>
+            <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" size="sm">
+              Today
+            </Button>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       {/* Main Content */}
       <div className="p-6">

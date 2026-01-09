@@ -1,30 +1,26 @@
 import { GraduationCap, Plus, BookOpen, Calendar as CalendarIcon } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 
 export default function SemesterPage() {
   return (
     <div className="h-full">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
-                <GraduationCap className="h-6 w-6" />
-                Semester Management
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Organize and manage your academic semesters
-              </p>
-            </div>
-            <Button className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-              <Plus className="h-4 w-4" />
-              New Semester
-            </Button>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader
+        title={
+          <span className="bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
+            <GraduationCap className="h-6 w-6" />
+            Semester Management
+          </span>
+        }
+        subtitle="Organize and manage your academic semesters"
+        action={
+          <Button className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+            <Plus className="h-4 w-4" />
+            New Semester
+          </Button>
+        }
+      />
 
       {/* Main Content */}
       <div className="p-6">

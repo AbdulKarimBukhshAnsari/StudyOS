@@ -17,27 +17,17 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
 
   return (
     <div className="h-full">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                Dashboard Overview
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Welcome back, {user?.name || 'Student'}! 👋
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader
+        title="Dashboard Overview"
+        subtitle={`Welcome back, ${user?.name || 'Student'}! 👋`}
+      />
 
       {/* Main Content */}
       <div className="p-6 space-y-6">
