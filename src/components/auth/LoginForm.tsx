@@ -10,9 +10,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/auth/PasswordInput';
+import { useToast } from '@/context/toastContext';
 
 
 export function LoginForm() {
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -32,14 +34,20 @@ export function LoginForm() {
       });
 
       if (result.error) {
-        setError(result.error.message || 'Invalid email or password');
+        const errorMessage = result.error.message || 'Invalid email or password';
+        setError(errorMessage);
+        toast.error('Login Failed', errorMessage);
       } else {
-        await new Promise(resolve => setTimeout(resolve, 300));
+        toast.success('Login Successful', 'Welcome back! Redirecting to your dashboard...');
+        // Give toast time to be visible before redirect
+        await new Promise(resolve => setTimeout(resolve, 800));
         window.location.href = ROUTES.private.dashboard;
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError('An unexpected error occurred. Please try again.');
+      const errorMessage = 'An unexpected error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error('Login Failed', errorMessage);
     } finally {
       setIsLoading(false);
     }
