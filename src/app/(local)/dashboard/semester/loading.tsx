@@ -1,9 +1,7 @@
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent } from '@/components/ui/card';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { GraduationCap, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SemesterCardSkeleton } from '@/components/dashboard/SemesterCardSkeleton';
+import { SemesterCardSkeleton } from '@/components/skeleton/SemesterCardSkeleton';
 
 export default function SemesterLoading() {
   return (

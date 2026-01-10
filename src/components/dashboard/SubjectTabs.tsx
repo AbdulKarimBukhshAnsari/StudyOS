@@ -21,6 +21,7 @@ interface SubjectTabsProps {
     priority: number;
     topic_count: number;
     quiz_count: number;
+    semester_id: string;
   };
   subjectId: string;
   topics: Topic[];
@@ -72,7 +73,11 @@ export function SubjectTabs({ subject, subjectId, topics }: SubjectTabsProps) {
       </TabsContent>
       
       <TabsContent value="topics" className="mt-8">
-        <SubjectTopicsTab subjectId={subjectId} topics={topics} />
+        <SubjectTopicsTab 
+          subjectId={subjectId} 
+          semesterId={subject.semester_id}
+          topics={topics} 
+        />
       </TabsContent>
     </Tabs>
   );

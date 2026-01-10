@@ -20,23 +20,34 @@ interface AddTopicModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   subjectId: string;
+  currentTopicCount?: number;
+  maxTopics?: number;
 }
 
 export function AddTopicModal({
   open,
   onOpenChange,
   subjectId,
+  currentTopicCount = 0,
+  maxTopics = 50,
 }: AddTopicModalProps) {
   const router = useRouter();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
 
+  const canAddMore = currentTopicCount < maxTopics;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!name.trim()) {
       toast.error('Topic name is required');
+      return;
+    }
+
+    if (!canAddMore) {
+      toast.error(`Maximum limit of ${maxTopics} topics reached`);
       return;
     }
 
@@ -69,6 +80,11 @@ export function AddTopicModal({
           <DialogTitle>Add New Topic</DialogTitle>
           <DialogDescription>
             Create a new topic for this subject. You can add notes and flashcards later.
+            {!canAddMore && (
+              <span className="block mt-2 text-destructive font-medium">
+                Maximum limit of {maxTopics} topics reached.
+              </span>
+            )}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -94,7 +110,7 @@ export function AddTopicModal({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading || !canAddMore}>
               {loading ? 'Creating...' : 'Create Topic'}
             </Button>
           </DialogFooter>

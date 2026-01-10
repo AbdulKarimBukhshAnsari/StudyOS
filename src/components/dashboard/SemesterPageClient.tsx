@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Plus } from 'lucide-react';
 import type { SubjectWithTopicCount } from '@/serverActions/semester/action';
+import { routeHelpers } from '@/constants/routes';
 
 interface SemesterPageClientProps {
   semesterId: string;
@@ -53,7 +54,7 @@ export function SemesterPageClient({
                 description={subject.description}
                 priority={subject.priority}
                 topicCount={subject.topic_count}
-                href={`/dashboard/semester/${semesterId}/${subject.id}`}
+                href={routeHelpers.subject(semesterId, subject.id)}
                 semesterId={semesterId}
               />
             ))}

@@ -2,8 +2,9 @@
 
 import type { BreadcrumbItem } from '@/components/dashboard/BreadcrumbNav';
 import { getUserSemesters } from '@/serverActions/semester/action';
-import { getSemesterWithSubjects } from '@/serverActions/semester/action';
+import { getSemesterWithSubjects, getSubjectById, getTopicById } from '@/serverActions/semester/action';
 import { cache } from 'react';
+import { ROUTES, routeHelpers } from '@/constants/routes';
 
 /**
  * Generate breadcrumbs for the semesters list page
@@ -15,11 +16,11 @@ export const getSemestersBreadcrumbs = cache(async (): Promise<BreadcrumbItem[]>
     {
       id: 'semesters',
       label: 'Semesters',
-      href: '/dashboard/semester',
+      href: ROUTES.private.dashboardSemester,
       options: semesters.map((s) => ({
         id: s.id,
         label: s.name,
-        href: `/dashboard/semester/${s.id}`,
+        href: routeHelpers.semester(s.id),
       })),
     },
   ];
@@ -46,21 +47,21 @@ export const getSemesterBreadcrumbs = cache(async (
     {
       id: 'semesters',
       label: 'Semesters',
-      href: '/dashboard/semester',
+      href: ROUTES.private.dashboardSemester,
       options: semesters.map((s) => ({
         id: s.id,
         label: s.name,
-        href: `/dashboard/semester/${s.id}`,
+        href: routeHelpers.semester(s.id),
       })),
     },
     {
       id: semesterId,
       label: semesterData.semester.name,
-      href: `/dashboard/semester/${semesterId}`,
+      href: routeHelpers.semester(semesterId),
       options: subjects.map((s) => ({
         id: s.id,
         label: s.name,
-        href: `/dashboard/semester/${semesterId}/${s.id}`,
+        href: routeHelpers.subject(semesterId, s.id),
       })),
     },
   ];
@@ -93,28 +94,82 @@ export const getSubjectBreadcrumbs = cache(async (
     {
       id: 'semesters',
       label: 'Semesters',
-      href: '/dashboard/semester',
+      href: ROUTES.private.dashboardSemester,
       options: semesters.map((s) => ({
         id: s.id,
         label: s.name,
-        href: `/dashboard/semester/${s.id}`,
+        href: routeHelpers.semester(s.id),
       })),
     },
     {
       id: semesterId,
       label: semester.name,
-      href: `/dashboard/semester/${semesterId}`,
+      href: routeHelpers.semester(semesterId),
       options: subjects.map((s) => ({
         id: s.id,
         label: s.name,
-        href: `/dashboard/semester/${semesterId}/${s.id}`,
+        href: routeHelpers.subject(semesterId, s.id),
       })),
     },
     {
       id: subjectId,
       label: subject.name,
-      href: `/dashboard/semester/${semesterId}/${subjectId}`,
+      href: routeHelpers.subject(semesterId, subjectId),
     },
   ];
 });
 
+/**
+ * Generate breadcrumbs for a topic detail page
+ */
+export const getTopicBreadcrumbs = cache(async (
+  semesterId: string,
+  subjectId: string,
+  topicId: string
+): Promise<BreadcrumbItem[]> => {
+  const [semesters, semesterData, subjectData, topic] = await Promise.all([
+    getUserSemesters(),
+    getSemesterWithSubjects(semesterId),
+    getSubjectById(subjectId, semesterId),
+    getTopicById(topicId, subjectId, semesterId),
+  ]);
+
+  if (!semesterData || !subjectData || !topic) {
+    return getSubjectBreadcrumbs(semesterId, subjectId);
+  }
+
+  const { semester, subjects } = semesterData;
+
+  return [
+    {
+      id: 'semesters',
+      label: 'Semesters',
+      href: ROUTES.private.dashboardSemester,
+      options: semesters.map((s) => ({
+        id: s.id,
+        label: s.name,
+        href: routeHelpers.semester(s.id),
+      })),
+    },
+    {
+      id: semesterId,
+      label: semester.name,
+      href: routeHelpers.semester(semesterId),
+      options: subjects.map((s) => ({
+        id: s.id,
+        label: s.name,
+        href: routeHelpers.subject(semesterId, s.id),
+      })),
+    },
+    {
+      id: subjectId,
+      label: subjectData.name,
+      href: routeHelpers.subject(semesterId, subjectId),
+    },
+    {
+      id: topicId,
+      label: topic.name,
+      href: routeHelpers.topic(semesterId, subjectId, topicId),
+    },
+  ];
+});

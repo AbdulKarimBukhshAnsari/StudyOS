@@ -59,3 +59,26 @@ export function isAuthPage(pathname: string): boolean {
   );
 }
 
+/**
+ * Helper functions to generate dynamic routes
+ * Use these instead of hardcoding paths
+ */
+export const routeHelpers = {
+  /**
+   * Get semester detail route
+   */
+  semester: (semesterId: string) => `${ROUTES.private.dashboardSemester}/${semesterId}`,
+  
+  /**
+   * Get subject detail route
+   */
+  subject: (semesterId: string, subjectId: string) => 
+    `${ROUTES.private.dashboardSemester}/${semesterId}/subject/${subjectId}`,
+  
+  /**
+   * Get topic detail route
+   */
+  topic: (semesterId: string, subjectId: string, topicId: string) => 
+    `${ROUTES.private.dashboardSemester}/${semesterId}/subject/${subjectId}/topic/${topicId}`,
+} as const;
+
