@@ -3,7 +3,7 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { BreadcrumbItem } from '@/components/dashboard/BreadcrumbNav';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SubjectCardSkeleton } from '@/components/dashboard/SubjectCardSkeleton';
+import { SubjectCardSkeleton } from '@/components/skeleton/SubjectCardSkeleton';
 import { ROUTES } from '@/constants/routes';
 
 export default function SemesterDetailLoading() {
