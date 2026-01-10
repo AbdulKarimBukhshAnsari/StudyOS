@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/auth-server';
+import { requireCachedUser } from '@/context/userContext';
 import { 
   BookOpen, 
   FileText, 
@@ -20,7 +20,7 @@ import { Progress } from '@/components/ui/progress';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 
 export default async function DashboardPage() {
-  const user = await getCurrentUser();
+  const user = await requireCachedUser();
 
   return (
     <div className="h-full">

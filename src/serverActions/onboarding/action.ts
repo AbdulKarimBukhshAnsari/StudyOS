@@ -1,7 +1,7 @@
 'use server'
 import { db } from "@/db";
 import { semesters, subjects } from "@/db/schema";
-import { getCurrentUser } from "@/lib/auth-server";
+import { requireCachedUserId } from "@/context/userContext";
 import { markUserAsOnboarded } from "@/serverActions/auth/action";
 import { formatDateForInput } from "@/utils/date";
 
@@ -15,17 +15,14 @@ type OnboardingData = {
 };
 
 export const completeOnboarding = async (data: OnboardingData) => {
-  const user = await getCurrentUser();
-  if (!user) {
-    return { success: false, error: 'User not authenticated' };
-  }
+  const userId = await requireCachedUserId();
 
   try {
     // First, create the semester
     const [semester] = await db
       .insert(semesters)
       .values({
-        user_id: user.id,
+        user_id: userId,
         name: data.semesterName,
         start_date: formatDateForInput(data.semesterStartDate),
         end_date: formatDateForInput(data.semesterEndDate),

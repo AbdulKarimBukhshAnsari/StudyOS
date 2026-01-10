@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users } from '@/db/schema';
-import { getCurrentUser } from '@/lib/auth-server';
+import { requireCachedUserId } from '@/context/userContext';
 import { eq } from 'drizzle-orm';
 
 /**
@@ -10,20 +10,13 @@ import { eq } from 'drizzle-orm';
  */
 export async function POST() {
   try {
-    const currentUser = await getCurrentUser();
-    
-    if (!currentUser?.id) {
-      return NextResponse.json(
-        { error: 'User not authenticated' },
-        { status: 401 }
-      );
-    }
+    const userId = await requireCachedUserId();
 
     // Check if user record already exists
     const existingUsers = await db
       .select()
       .from(users)
-      .where(eq(users.better_auth_user_id, currentUser.id))
+      .where(eq(users.better_auth_user_id, userId))
       .limit(1);
 
     if (existingUsers.length > 0) {
@@ -35,7 +28,7 @@ export async function POST() {
 
     // Create the user record
     await db.insert(users).values({
-      better_auth_user_id: currentUser.id,
+      better_auth_user_id: userId,
     });
 
     return NextResponse.json(
