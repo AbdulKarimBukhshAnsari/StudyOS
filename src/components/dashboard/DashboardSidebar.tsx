@@ -152,7 +152,7 @@ export function DashboardSidebar() {
           </nav>
 
           {/* Footer decoration */}
-          <div className="px-4 py-4 border-t border-border">
+          <div className="px-4 py-4 border-t border-border space-y-4">
             <div className="text-xs text-muted-foreground text-center">
               <p className="font-medium">StudyOS v1.0</p>
               <p className="text-[10px] mt-1">Your Academic OS</p>
