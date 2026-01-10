@@ -4,6 +4,7 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { getUserSemesters } from '@/serverActions/semester/action';
 import { SemesterCard } from '@/components/dashboard/SemesterCard';
 import { Card, CardContent } from '@/components/ui/card';
+import { routeHelpers } from '@/constants/routes';
 
 export default async function SemesterPage() {
   const semesters = await getUserSemesters();
@@ -56,7 +57,7 @@ export default async function SemesterPage() {
                 endDate={semester.end_date}
                 isActive={semester.is_active}
                 subjectCount={semester.subject_count}
-                href={`/dashboard/semester/${semester.id}`}
+                href={routeHelpers.semester(semester.id)}
               />
             ))}
           </div>

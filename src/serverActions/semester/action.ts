@@ -6,6 +6,7 @@ import { semesters, subjects, topics, quizzes } from '@/db/schema';
 import { requireCachedUserId } from '@/context/userContext';
 import { eq, sql, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { routeHelpers } from '@/constants/routes';
 
 export interface SemesterWithSubjectCount {
   id: string;
@@ -96,6 +97,69 @@ export const getSemesterById = cache(async (semesterId: string) => {
     return semester;
   } catch (error) {
     console.error('Error fetching semester:', error);
+    return null;
+  }
+});
+
+/**
+ * Validate that a subject belongs to a semester and user has access
+ * Cached and optimized - returns subject data if valid, null otherwise
+ */
+export const validateSubjectAccess = cache(async (
+  subjectId: string,
+  semesterId: string
+) => {
+  await requireCachedUserId();
+
+  try {
+    // Verify semester ownership (cached)
+    const semester = await getSemesterById(semesterId);
+    if (!semester) {
+      return null;
+    }
+
+    // Verify subject belongs to semester in a single query
+    const [subject] = await db
+      .select()
+      .from(subjects)
+      .where(and(eq(subjects.id, subjectId), eq(subjects.semester_id, semesterId)))
+      .limit(1);
+
+    return subject || null;
+  } catch (error) {
+    console.error('Error validating subject access:', error);
+    return null;
+  }
+});
+
+/**
+ * Validate that a topic belongs to a subject and user has access
+ * Cached and optimized - returns topic data if valid, null otherwise
+ */
+export const validateTopicAccess = cache(async (
+  topicId: string,
+  subjectId: string,
+  semesterId: string
+) => {
+  await requireCachedUserId();
+
+  try {
+    // Verify subject access (cached, which also verifies semester)
+    const subject = await validateSubjectAccess(subjectId, semesterId);
+    if (!subject) {
+      return null;
+    }
+
+    // Verify topic belongs to subject in a single query
+    const [topic] = await db
+      .select()
+      .from(topics)
+      .where(and(eq(topics.id, topicId), eq(topics.subject_id, subjectId)))
+      .limit(1);
+
+    return topic || null;
+  } catch (error) {
+    console.error('Error validating topic access:', error);
     return null;
   }
 });
@@ -204,7 +268,7 @@ export async function createSubject(
       })
       .returning();
 
-    revalidatePath(`/dashboard/semester/${semesterId}`);
+    revalidatePath(routeHelpers.semester(semesterId));
     return { success: true, data: newSubject };
   } catch (error) {
     console.error('Error creating subject:', error);
@@ -220,27 +284,16 @@ export async function deleteSubject(subjectId: string, semesterId: string) {
   await requireCachedUserId();
 
   try {
-    // Verify semester ownership
-    const semester = await getSemesterById(semesterId);
-    if (!semester) {
-      return { success: false, error: 'Semester not found' };
-    }
-
-    // Verify subject belongs to this semester
-    const [subject] = await db
-      .select()
-      .from(subjects)
-      .where(eq(subjects.id, subjectId))
-      .limit(1);
-
-    if (!subject || subject.semester_id !== semesterId) {
+    // Validate subject access (cached validation)
+    const subject = await validateSubjectAccess(subjectId, semesterId);
+    if (!subject) {
       return { success: false, error: 'Subject not found' };
     }
 
     // Delete subject (cascade will handle topics, notes, etc.)
     await db.delete(subjects).where(eq(subjects.id, subjectId));
 
-    revalidatePath(`/dashboard/semester/${semesterId}`);
+    revalidatePath(routeHelpers.semester(semesterId));
     return { success: true };
   } catch (error) {
     console.error('Error deleting subject:', error);
@@ -250,15 +303,15 @@ export async function deleteSubject(subjectId: string, semesterId: string) {
 
 /**
  * Get subject with topic and quiz counts
- * Optimized single query
+ * Optimized single query with cached validation
  */
 export const getSubjectById = cache(async (subjectId: string, semesterId: string) => {
   await requireCachedUserId();
 
   try {
-    // Verify semester ownership
-    const semester = await getSemesterById(semesterId);
-    if (!semester) {
+    // Validate subject access first (cached)
+    const subject = await validateSubjectAccess(subjectId, semesterId);
+    if (!subject) {
       return null;
     }
 
@@ -334,7 +387,7 @@ export async function createTopic(
   await requireCachedUserId();
 
   try {
-    // Verify subject exists and get its semester to verify ownership
+    // Get subject to find its semester_id
     const [subject] = await db
       .select()
       .from(subjects)
@@ -345,19 +398,30 @@ export async function createTopic(
       return { success: false, error: 'Subject not found' };
     }
 
-    // Verify semester ownership
-    const semester = await getSemesterById(subject.semester_id);
-    if (!semester) {
+    // Validate subject access (cached validation)
+    const validatedSubject = await validateSubjectAccess(subjectId, subject.semester_id);
+    if (!validatedSubject) {
       return { success: false, error: 'Access denied' };
     }
 
+    // Check topic count limit (50 max)
+    const [topicCount] = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(topics)
+      .where(eq(topics.subject_id, subjectId));
+
+    const currentCount = Number(topicCount?.count || 0);
+    if (currentCount >= 50) {
+      return { success: false, error: 'Maximum limit of 50 topics reached per subject' };
+    }
+
     // Get max order_index for this subject
-    const [maxOrder] = await db
+    const [maxOrderResult] = await db
       .select({ max: sql<number>`COALESCE(MAX(${topics.order_index}), 0)` })
       .from(topics)
       .where(eq(topics.subject_id, subjectId));
 
-    const nextOrder = (maxOrder?.max ? Number(maxOrder.max) : 0) + 1;
+    const nextOrder = (maxOrderResult?.max ? Number(maxOrderResult.max) : 0) + 1;
 
     // Insert topic
     const [newTopic] = await db
@@ -369,11 +433,52 @@ export async function createTopic(
       })
       .returning();
 
-    revalidatePath(`/dashboard/semester/${subject.semester_id}/${subjectId}`);
+    revalidatePath(routeHelpers.subject(subject.semester_id, subjectId));
     return { success: true, data: newTopic };
   } catch (error) {
     console.error('Error creating topic:', error);
     return { success: false, error: 'Failed to create topic' };
+  }
+}
+
+/**
+ * Get a topic by ID with validation
+ */
+export const getTopicById = cache(async (topicId: string, subjectId: string, semesterId: string) => {
+  // Use cached validation helper
+  return await validateTopicAccess(topicId, subjectId, semesterId);
+});
+
+/**
+ * Update topic status
+ */
+export async function updateTopicStatus(
+  topicId: string,
+  subjectId: string,
+  semesterId: string,
+  status: 'Not Clear' | 'Somewhat Clear' | 'Clear'
+) {
+  await requireCachedUserId();
+
+  try {
+    // Validate topic access (cached validation - checks semester, subject, and topic)
+    const topic = await validateTopicAccess(topicId, subjectId, semesterId);
+    if (!topic) {
+      return { success: false, error: 'Topic not found' };
+    }
+
+    // Update topic status
+    await db
+      .update(topics)
+      .set({ status })
+      .where(eq(topics.id, topicId));
+
+    revalidatePath(routeHelpers.topic(semesterId, subjectId, topicId));
+    revalidatePath(routeHelpers.subject(semesterId, subjectId));
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating topic status:', error);
+    return { success: false, error: 'Failed to update topic status' };
   }
 }
 

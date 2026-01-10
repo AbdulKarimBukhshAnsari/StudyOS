@@ -4,13 +4,14 @@ import { BreadcrumbItem } from '@/components/dashboard/BreadcrumbNav';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SubjectCardSkeleton } from '@/components/dashboard/SubjectCardSkeleton';
+import { ROUTES } from '@/constants/routes';
 
 export default function SemesterDetailLoading() {
   const breadcrumbs: BreadcrumbItem[] = [
     {
       id: 'semesters',
       label: 'Semesters',
-      href: '/dashboard/semester',
+      href: ROUTES.private.dashboardSemester,
     },
     {
       id: 'loading',

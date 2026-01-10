@@ -1,5 +1,3 @@
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent } from '@/components/ui/card';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { GraduationCap, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
