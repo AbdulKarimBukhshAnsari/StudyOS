@@ -12,6 +12,7 @@ import { useOnboarding } from '@/context/onboardingContext';
 import { completeOnboarding } from '@/serverActions/onboarding/action';
 import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/utils';
+import { isNotEmpty } from '@/utils/validation';
 
 export default function OnboardingStep3() {
   const router = useRouter();
@@ -30,14 +31,14 @@ export default function OnboardingStep3() {
   // Redirect if semester data is missing
   useEffect(() => {
     if (!onboardingDetails?.semesterName || !onboardingDetails?.semesterStartDate || !onboardingDetails?.semesterEndDate) {
-      router.push(`${ROUTES.private.onboarding}/step2`);
+      router.push(ROUTES.private.onboarding.step2);
     }
   }, [onboardingDetails, router]);
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
 
-    if (!formData.subjectName.trim()) {
+    if (!isNotEmpty(formData.subjectName)) {
       newErrors.subjectName = 'Subject name is required';
     }
 
@@ -105,7 +106,7 @@ export default function OnboardingStep3() {
         subjectDescription: formData.subjectDescription,
       });
     }
-    router.push(`${ROUTES.private.onboarding}/step2`);
+    router.push(ROUTES.private.onboarding.step2);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

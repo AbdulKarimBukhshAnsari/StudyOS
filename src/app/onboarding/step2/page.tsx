@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label';
 import { useOnboarding } from '@/context/onboardingContext';
 import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/utils';
+import { formatDateForInput, getTodayDateString, resetTimeToMidnight, getDaysDifference } from '@/utils/date';
+import { isNotEmpty, validateSemesterDateRange } from '@/utils/validation';
 
 export default function OnboardingStep2() {
   const router = useRouter();
@@ -24,17 +26,17 @@ export default function OnboardingStep2() {
   const [formData, setFormData] = useState({
     semesterName: onboardingDetails?.semesterName || '',
     startDate: onboardingDetails?.semesterStartDate 
-      ? new Date(onboardingDetails.semesterStartDate).toISOString().split('T')[0]
+      ? formatDateForInput(onboardingDetails.semesterStartDate)
       : '',
     endDate: onboardingDetails?.semesterEndDate
-      ? new Date(onboardingDetails.semesterEndDate).toISOString().split('T')[0]
+      ? formatDateForInput(onboardingDetails.semesterEndDate)
       : '',
   });
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
 
-    if (!formData.semesterName.trim()) {
+    if (!isNotEmpty(formData.semesterName)) {
       newErrors.semesterName = 'Semester name is required';
     }
 
@@ -49,22 +51,14 @@ export default function OnboardingStep2() {
     if (formData.startDate && formData.endDate) {
       const start = new Date(formData.startDate);
       const end = new Date(formData.endDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      if (start < today) {
-        newErrors.startDate = 'Start date cannot be in the past';
-      }
-
-      if (end <= start) {
-        newErrors.endDate = 'End date must be after start date';
-      }
-
-      // Check if semester is too long (more than 2 years)
-      const diffTime = Math.abs(end.getTime() - start.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      if (diffDays > 730) {
-        newErrors.endDate = 'Semester duration cannot exceed 2 years';
+      
+      const dateValidation = validateSemesterDateRange(start, end);
+      if (!dateValidation.isValid) {
+        if (dateValidation.error?.includes('past')) {
+          newErrors.startDate = dateValidation.error;
+        } else {
+          newErrors.endDate = dateValidation.error || 'Invalid date range';
+        }
       }
     }
 
@@ -91,13 +85,13 @@ export default function OnboardingStep2() {
     }));
 
     setTimeout(() => {
-      router.push(`${ROUTES.private.onboarding}/step3`);
+      router.push(ROUTES.private.onboarding.step3);
       setIsLoading(false);
     }, 100);
   };
 
   const handleBack = () => {
-    router.push(`${ROUTES.private.onboarding}/step1`);
+    router.push(ROUTES.private.onboarding.step1);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,7 +151,7 @@ export default function OnboardingStep2() {
               onChange={handleChange}
               className={cn("pl-10", errors.startDate && "border-destructive")}
               disabled={isLoading}
-              min={new Date().toISOString().split('T')[0]}
+              min={getTodayDateString()}
             />
           </div>
           {errors.startDate && (
@@ -177,7 +171,7 @@ export default function OnboardingStep2() {
               onChange={handleChange}
               className={cn("pl-10", errors.endDate && "border-destructive")}
               disabled={isLoading}
-              min={formData.startDate || new Date().toISOString().split('T')[0]}
+              min={formData.startDate || getTodayDateString()}
             />
           </div>
           {errors.endDate && (

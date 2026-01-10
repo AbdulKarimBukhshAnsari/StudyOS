@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/auth/PasswordInput';
+import { isValidPasswordLength, doPasswordsMatch } from '@/utils/validation';
 
 export function RegisterForm() {
   const router = useRouter();
@@ -29,13 +30,13 @@ export function RegisterForm() {
     setError(null);
     setPasswordMismatch(false);
 
-    if (formData.password !== formData.confirmPassword) {
+    if (!doPasswordsMatch(formData.password, formData.confirmPassword)) {
       setPasswordMismatch(true);
       setError('Passwords do not match');
       return;
     }
 
-    if (formData.password.length < 8) {
+    if (!isValidPasswordLength(formData.password)) {
       setError('Password must be at least 8 characters long');
       return;
     }
