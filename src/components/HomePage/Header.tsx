@@ -3,9 +3,14 @@
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { HEADER } from '@/constants';
 
 export function Header() {
+  const { setTheme, resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+
   return (
     <motion.header
       initial={{ y: -100, opacity: 0 }}
@@ -36,6 +41,19 @@ export function Header() {
           transition={{ delay: 0.3 }}
           className="flex items-center gap-3"
         >
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(isDark ? 'light' : 'dark')}
+            aria-label="Toggle theme"
+            className="h-9 w-9"
+          >
+            {isDark ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </Button>
           <Button variant="ghost" asChild>
             <Link href={HEADER.navigation.login.href}>
               {HEADER.navigation.login.text}

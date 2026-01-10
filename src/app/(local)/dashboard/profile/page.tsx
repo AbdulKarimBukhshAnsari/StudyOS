@@ -6,7 +6,6 @@ import {
   Settings, 
   LogOut,
   Bell,
-  Moon,
   Clock
 } from 'lucide-react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
@@ -15,6 +14,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default async function ProfilePage() {
   const user = await requireCachedUser();
@@ -113,15 +113,8 @@ export default async function ProfilePage() {
                 <Switch defaultChecked />
               </div>
               <Separator />
-              <div className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors">
-                <div className="flex items-center gap-3">
-                  <Moon className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="font-medium">Dark Mode</p>
-                    <CardDescription>Switch to dark theme</CardDescription>
-                  </div>
-                </div>
-                <Switch />
+              <div className="p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors">
+                <ThemeToggle showLabel />
               </div>
               <Separator />
               <div className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors">
