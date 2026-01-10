@@ -3,7 +3,6 @@
 import {useState}  from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { User, Mail, Lock, Loader2 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 import { ROUTES } from '@/constants/routes';
@@ -12,9 +11,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PasswordInput } from '@/components/auth/PasswordInput';
 import { isValidPasswordLength, doPasswordsMatch } from '@/utils/validation';
+import { useToast } from '@/context/toastContext';
 
 export function RegisterForm() {
-  const router = useRouter();
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -53,7 +53,9 @@ export function RegisterForm() {
       console.log(result);
 
       if (result.error) {
-        setError(result.error.message || 'Registration failed. Please try again.');
+        const errorMessage = result.error.message || 'Registration failed. Please try again.';
+        setError(errorMessage);
+        toast.error('Registration Failed', errorMessage);
       } else {
         // Create user record in the users table
         try {
@@ -63,10 +65,15 @@ export function RegisterForm() {
           });
           
           if (!createUserResponse.ok) {
-            console.error('Failed to create user record:', await createUserResponse.text());
+            const errorText = await createUserResponse.text();
+            console.error('Failed to create user record:', errorText);
+            toast.error('Account Setup Failed', 'Your account was created but we encountered an issue setting up your profile. Please contact support.');
+          } else {
+            toast.success('Account Created', 'Your account has been successfully created!');
           }
         } catch (error) {
           console.error('Error creating user record:', error);
+          toast.error('Account Setup Failed', 'Your account was created but we encountered an issue setting up your profile. Please contact support.');
         }
         
       
@@ -75,7 +82,9 @@ export function RegisterForm() {
         window.location.href = ROUTES.private.dashboard;
       }
     } catch {
-      setError('An unexpected error occurred. Please try again.');
+      const errorMessage = 'An unexpected error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error('Registration Failed', errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -13,9 +13,11 @@ import { completeOnboarding } from '@/serverActions/onboarding/action';
 import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 import { isNotEmpty } from '@/utils/validation';
+import { useToast } from '@/context/toastContext';
 
 export default function OnboardingStep3() {
   const router = useRouter();
+  const toast = useToast();
   const { onboardingDetails, setOnboardingDetails } = useOnboarding();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -86,13 +88,18 @@ export default function OnboardingStep3() {
       });
 
       if (result.success) {
+        toast.success('Onboarding Complete!', 'Your account has been set up successfully. Welcome to StudyOS!');
         window.location.href = ROUTES.private.dashboard;
       } else {
-        setError(result.error || 'Failed to complete onboarding. Please try again.');
+        const errorMessage = result.error || 'Failed to complete onboarding. Please try again.';
+        setError(errorMessage);
+        toast.error('Onboarding Failed', errorMessage);
         setIsLoading(false);
       }
     } catch {
-      setError('An unexpected error occurred. Please try again.');
+      const errorMessage = 'An unexpected error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error('Onboarding Failed', errorMessage);
       setIsLoading(false);
     }
   };

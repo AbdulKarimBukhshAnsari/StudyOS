@@ -1,11 +1,10 @@
-import { getCurrentUser } from '@/lib/auth-server';
+import { requireCachedUser } from '@/context/userContext';
 import { 
   User, 
   Mail, 
   Calendar, 
   Settings, 
   LogOut,
-  UserCircle,
   Bell,
   Moon,
   Clock
@@ -18,7 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 
 export default async function ProfilePage() {
-  const user = await getCurrentUser();
+  const user = await requireCachedUser();
 
   return (
     <div className="h-full">

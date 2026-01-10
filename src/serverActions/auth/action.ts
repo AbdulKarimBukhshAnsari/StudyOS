@@ -1,29 +1,29 @@
 'use server'
 import {db} from "@/db";
 import { users } from "@/db/schema";
-import { getCurrentUser } from "@/lib/auth-server";
+import { requireCachedUserId, getCachedOnboardingStatus } from "@/context/userContext";
 import { eq } from "drizzle-orm";
+import { cache } from 'react';
 
-export const checkOnBoardingStatus = async () => {
-  try {
-    const user = await getCurrentUser();
-    if (!user) {
-      return false;
-    }
-    const record = await db.select().from(users).where(eq(users.better_auth_user_id, user.id));
-    // If no record exists or is_onboarded is null/undefined, return false
-    return record?.[0]?.is_onboarded ?? false;
-  } catch (error) {
-    console.error('Error checking onboarding status:', error);
-    return false;
-  }
-}
+/**
+ * Check onboarding status - uses cached user context
+ * User check automatically handled - no null checks needed
+ */
+export const checkOnBoardingStatus = cache(async () => {
+  return await getCachedOnboardingStatus();
+});
 
 export const markUserAsOnboarded = async () => {
-  const user = await getCurrentUser();
-  if (!user) {
+  const userId = await requireCachedUserId();
+  
+  try {
+    await db
+      .update(users)
+      .set({ is_onboarded: true })
+      .where(eq(users.better_auth_user_id, userId));
+    return true;
+  } catch (error) {
+    console.error('Error marking user as onboarded:', error);
     return false;
   }
-  await db.update(users).set({ is_onboarded: true }).where(eq(users.better_auth_user_id, user.id));
-  return true;
 }
