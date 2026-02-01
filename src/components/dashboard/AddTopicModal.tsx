@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createTopic } from '@/serverActions/semester/action';
+import { createTopic } from '@/apiService/semester';
 import { useToast } from '@/context/toastContext';
 
 interface AddTopicModalProps {

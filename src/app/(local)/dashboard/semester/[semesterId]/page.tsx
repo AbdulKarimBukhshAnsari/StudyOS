@@ -1,4 +1,4 @@
-import { getSemesterWithSubjects, getUserSemesters } from '@/serverActions/semester/action';
+import { getSemesterWithSubjects, getUserSemesters } from '@/apiService/semester.server';
 import { notFound } from 'next/navigation';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { SemesterPageClient } from '@/components/dashboard/SemesterPageClient';

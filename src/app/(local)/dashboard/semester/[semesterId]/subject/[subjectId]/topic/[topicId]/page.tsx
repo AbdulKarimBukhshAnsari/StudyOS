@@ -4,7 +4,7 @@ import {
   getSubjectById,
   getTopicById,
   getTopicsBySubjectId,
-} from '@/serverActions/semester/action';
+} from '@/apiService/semester.server';
 import { notFound } from 'next/navigation';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { SemesterProvider } from '@/context/semesterContext';
@@ -23,8 +23,8 @@ export default async function TopicDetailPage({ params }: TopicPageProps) {
     getSemesterWithSubjects(semesterId),
     getUserSemesters(),
     getTopicBreadcrumbs(semesterId, subjectId, topicId),
-    getSubjectById(subjectId, semesterId),
-    getTopicById(topicId, subjectId, semesterId),
+    getSubjectById(subjectId),
+    getTopicById(topicId),
     getTopicsBySubjectId(subjectId),
   ]);
 

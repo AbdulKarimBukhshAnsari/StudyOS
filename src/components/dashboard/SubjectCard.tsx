@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { deleteSubject } from '@/serverActions/semester/action';
+import { deleteSubject } from '@/apiService/semester';
 import { useToast } from '@/context/toastContext';
 
 interface SubjectCardProps {
@@ -44,7 +44,7 @@ export function SubjectCard({
     }
 
     setLoading(true);
-    const result = await deleteSubject(id, semesterId);
+    const result = await deleteSubject(id);
     setLoading(false);
 
     if (result.success) {

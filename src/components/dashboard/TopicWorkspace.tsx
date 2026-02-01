@@ -8,17 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, CreditCard, HelpCircle, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { updateTopicStatus } from '@/serverActions/semester/action';
+import { updateTopicStatus } from '@/apiService/semester';
 import { useToast } from '@/context/toastContext';
 import { routeHelpers } from '@/constants/routes';
-
-interface Topic {
-  id: string;
-  name: string;
-  status: 'Not Clear' | 'Somewhat Clear' | 'Clear';
-  order_index: number;
-  created_at: Date;
-}
+import type { Topic } from '@/types/semester';
 
 interface TopicWorkspaceProps {
   topic: Topic;
@@ -59,7 +52,7 @@ export function TopicWorkspace({
     if (newStatus === currentStatus) return;
 
     setStatusLoading(true);
-    const result = await updateTopicStatus(topicId, subjectId, semesterId, newStatus);
+    const result = await updateTopicStatus(topicId, newStatus);
     setStatusLoading(false);
 
     if (result.success) {

@@ -9,14 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { AddTopicModal } from './AddTopicModal';
 import { cn } from '@/lib/utils';
 import { routeHelpers } from '@/constants/routes';
-
-interface Topic {
-  id: string;
-  name: string;
-  status: 'Not Clear' | 'Somewhat Clear' | 'Clear';
-  order_index: number;
-  created_at: Date;
-}
+import type { Topic } from '@/types/semester';
 
 interface SubjectTopicsTabProps {
   subjectId: string;

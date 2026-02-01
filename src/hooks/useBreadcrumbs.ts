@@ -1,8 +1,7 @@
 'use server';
 
 import type { BreadcrumbItem } from '@/components/dashboard/BreadcrumbNav';
-import { getUserSemesters } from '@/serverActions/semester/action';
-import { getSemesterWithSubjects, getSubjectById, getTopicById } from '@/serverActions/semester/action';
+import { getUserSemesters, getSemesterWithSubjects, getSubjectById, getTopicById } from '@/apiService/semester.server';
 import { cache } from 'react';
 import { ROUTES, routeHelpers } from '@/constants/routes';
 
@@ -130,8 +129,8 @@ export const getTopicBreadcrumbs = cache(async (
   const [semesters, semesterData, subjectData, topic] = await Promise.all([
     getUserSemesters(),
     getSemesterWithSubjects(semesterId),
-    getSubjectById(subjectId, semesterId),
-    getTopicById(topicId, subjectId, semesterId),
+    getSubjectById(subjectId),
+    getTopicById(topicId),
   ]);
 
   if (!semesterData || !subjectData || !topic) {

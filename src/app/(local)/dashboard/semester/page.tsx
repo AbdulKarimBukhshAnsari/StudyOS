@@ -1,7 +1,7 @@
 import { GraduationCap, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { getUserSemesters } from '@/serverActions/semester/action';
+import { getUserSemesters } from '@/apiService/semester.server';
 import { SemesterCard } from '@/components/dashboard/SemesterCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { routeHelpers } from '@/constants/routes';

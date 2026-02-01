@@ -1,17 +1,17 @@
 'use client';
 
 import React, { createContext, useContext, useMemo } from 'react';
-import type { SemesterWithSubjectCount, SubjectWithTopicCount } from '@/serverActions/semester/action';
+import type { SemesterWithSubjectCount, SubjectWithTopicCount } from '@/types/semester';
 
 interface SemesterContextValue {
   semesters: SemesterWithSubjectCount[];
   currentSemester: {
     id: string;
     name: string;
-    start_date: Date;
-    end_date: Date;
+    start_date: string;
+    end_date: string;
     is_active: boolean;
-    created_at: Date;
+    created_at: string;
   } | null;
   currentSubjects: SubjectWithTopicCount[];
   getSemesterById: (id: string) => SemesterWithSubjectCount | undefined;
