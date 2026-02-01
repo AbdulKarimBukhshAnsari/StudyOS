@@ -215,15 +215,6 @@ export function ProblemStatement() {
             transition={{ delay: 0.2 }}
             className="text-2xl sm:text-3xl font-semibold text-center leading-relaxed"
           >
-            <motion.span
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={conclusionInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ delay: 0.3, type: "spring" }}
-              className="inline-block bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent font-bold"
-            >
-              {PROBLEM_STATEMENT.conclusion.highlight}
-            </motion.span>
-              {' '}
               <span className="text-foreground/90">
                 {PROBLEM_STATEMENT.conclusion.text}
               </span>

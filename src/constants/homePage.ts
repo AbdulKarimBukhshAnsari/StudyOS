@@ -93,8 +93,7 @@ export const HOMEPAGE = {
       },
     ],
     conclusion: {
-      highlight: 'What students are missing',
-      text: 'is a single, intelligent workspace that adapts to their semester and supports daily learning in small, effective actions.',
+      text: 'What students are missing is a single, intelligent workspace that adapts to their semester and supports daily learning in small, effective actions.',
     },
   },
   features: {
