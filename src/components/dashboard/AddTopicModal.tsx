@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -13,13 +12,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createTopic } from '@/apiService/semester';
+import { useCreateTopic } from '@/hooks/useSemesterQueries';
 import { useToast } from '@/context/toastContext';
 
 interface AddTopicModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   subjectId: string;
+  semesterId: string;
   currentTopicCount?: number;
   maxTopics?: number;
 }
@@ -28,15 +28,17 @@ export function AddTopicModal({
   open,
   onOpenChange,
   subjectId,
+  semesterId,
   currentTopicCount = 0,
   maxTopics = 50,
 }: AddTopicModalProps) {
-  const router = useRouter();
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
 
   const canAddMore = currentTopicCount < maxTopics;
+
+  // TanStack Query mutation - handles loading state and cache invalidation automatically
+  const createTopicMutation = useCreateTopic();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,27 +53,34 @@ export function AddTopicModal({
       return;
     }
 
-    setLoading(true);
-    const result = await createTopic(subjectId, { name });
-
-    setLoading(false);
-
-    if (result.success) {
-      toast.success('Topic created successfully');
-      setName('');
-      onOpenChange(false);
-      router.refresh();
-    } else {
-      toast.error(result.error || 'Failed to create topic');
-    }
+    createTopicMutation.mutate(
+      {
+        subjectId,
+        semesterId,
+        data: { name },
+      },
+      {
+        onSuccess: () => {
+          toast.success('Topic created successfully');
+          setName('');
+          onOpenChange(false);
+          // No need for router.refresh() - TanStack Query invalidates the cache automatically!
+        },
+        onError: (error) => {
+          toast.error(error.message || 'Failed to create topic');
+        },
+      }
+    );
   };
 
   const handleClose = () => {
-    if (!loading) {
+    if (!createTopicMutation.isPending) {
       setName('');
       onOpenChange(false);
     }
   };
+
+  const loading = createTopicMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>

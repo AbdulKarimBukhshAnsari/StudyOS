@@ -150,6 +150,7 @@ export function SubjectTopicsTab({ subjectId, semesterId, topics }: SubjectTopic
         open={addModalOpen}
         onOpenChange={setAddModalOpen}
         subjectId={subjectId}
+        semesterId={semesterId}
         currentTopicCount={topics.length}
         maxTopics={MAX_TOPICS}
       />

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, CreditCard, HelpCircle, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { updateTopicStatus } from '@/apiService/semester';
+import { useUpdateTopicStatus } from '@/hooks/useSemesterQueries';
 import { useToast } from '@/context/toastContext';
 import { routeHelpers } from '@/constants/routes';
 import type { Topic } from '@/types/semester';
@@ -31,7 +31,9 @@ export function TopicWorkspace({
   const router = useRouter();
   const toast = useToast();
   const [currentStatus, setCurrentStatus] = useState(topic.status);
-  const [statusLoading, setStatusLoading] = useState(false);
+
+  // TanStack Query mutation - handles loading state and cache invalidation automatically
+  const updateStatusMutation = useUpdateTopicStatus();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -51,18 +53,22 @@ export function TopicWorkspace({
   const handleStatusChange = async (newStatus: 'Not Clear' | 'Somewhat Clear' | 'Clear') => {
     if (newStatus === currentStatus) return;
 
-    setStatusLoading(true);
-    const result = await updateTopicStatus(topicId, newStatus);
-    setStatusLoading(false);
-
-    if (result.success) {
-      setCurrentStatus(newStatus);
-      toast.success('Topic status updated successfully');
-      router.refresh();
-    } else {
-      toast.error(result.error || 'Failed to update topic status');
-    }
+    updateStatusMutation.mutate(
+      { topicId, subjectId, status: newStatus },
+      {
+        onSuccess: () => {
+          setCurrentStatus(newStatus);
+          toast.success('Topic status updated successfully');
+          // No need for router.refresh() - TanStack Query invalidates the cache automatically!
+        },
+        onError: (error) => {
+          toast.error(error.message || 'Failed to update topic status');
+        },
+      }
+    );
   };
+
+  const statusLoading = updateStatusMutation.isPending;
 
   const handleBack = () => {
     router.push(routeHelpers.subject(semesterId, subjectId));
