@@ -53,12 +53,9 @@ import { isDateInPast, isEndDateAfterStart, getDaysDifference } from './date';
 export function validateSemesterDateRange(
   startDate: Date,
   endDate: Date,
-  maxDays: number = 730
+  maxDays: number = 365
 ): { isValid: boolean; error?: string } {
-  if (isDateInPast(startDate)) {
-    return { isValid: false, error: 'Start date cannot be in the past' };
-  }
-
+  
   if (!isEndDateAfterStart(startDate, endDate)) {
     return { isValid: false, error: 'End date must be after start date' };
   }

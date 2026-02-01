@@ -60,6 +60,6 @@ export function isDateInPast(date: Date): boolean {
  * @returns true if end date is after start date
  */
 export function isEndDateAfterStart(startDate: Date, endDate: Date): boolean {
-  return endDate > startDate;
+  return endDate >= startDate; // semester end date and start date should not be same 
 }
 
