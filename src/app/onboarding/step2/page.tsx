@@ -151,7 +151,7 @@ export default function OnboardingStep2() {
               onChange={handleChange}
               className={cn("pl-10", errors.startDate && "border-destructive")}
               disabled={isLoading}
-              min={getTodayDateString()}
+              // min={getTodayDateString()}
             />
           </div>
           {errors.startDate && (
@@ -171,7 +171,7 @@ export default function OnboardingStep2() {
               onChange={handleChange}
               className={cn("pl-10", errors.endDate && "border-destructive")}
               disabled={isLoading}
-              min={formData.startDate || getTodayDateString()}
+              min={formData.startDate ? new Date(new Date(formData.startDate).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : getTodayDateString()}
             />
           </div>
           {errors.endDate && (
