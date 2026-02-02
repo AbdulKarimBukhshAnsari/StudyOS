@@ -16,7 +16,7 @@ export async function getUserSemesters(): Promise<SemesterWithSubjectCount[]> {
 
 
 export async function getSemesterById(semesterId: string): Promise<Semester | null> {
-  return serverApiFetch<Semester>(API_URLS.semesters.getById(semesterId));
+  return serverApiFetch<Semester>(API_URLS.semesters.getById(semesterId), { tag: `semester-${semesterId}` });
 }
 
 
@@ -24,7 +24,8 @@ export async function getSubjectsBySemesterId(
   semesterId: string
 ): Promise<SubjectWithTopicCount[]> {
   const data = await serverApiFetch<SubjectWithTopicCount[]>(
-    API_URLS.semesters.getSubjects(semesterId)
+    API_URLS.semesters.getSubjects(semesterId),
+    { tag: `subjects-semester-${semesterId}` }
   );
   return data || [];
 }

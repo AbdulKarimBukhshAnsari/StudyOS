@@ -4,6 +4,7 @@ import { semesters, subjects, topics } from '@/db/schema';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { eq, and, sql } from 'drizzle-orm';
+import { revalidateTag } from 'next/cache';
 
 interface RouteParams {
   params: Promise<{ semesterId: string }>;
@@ -134,6 +135,8 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         priority: body.priority ?? 1,
       })
       .returning();
+    // Revalidate relevant cache tags
+    revalidateTag(`subjects-semester-${semesterId}` , 'max');
 
     return NextResponse.json({
       success: true,

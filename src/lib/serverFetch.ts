@@ -2,28 +2,33 @@ import { cookies } from 'next/headers';
 
 /**
  * Server-side fetch utility for calling API routes with authentication
- * This is used by Server Components to call API routes
+ * Supports Next.js server caching + tags
  */
 export async function serverFetch<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit & { tag?: string | string[]; cache?: 'no-store' | 'force-cache' | 'default' | 'reload' } = {}
 ): Promise<T> {
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();
 
-  // Get the base URL - in development, use localhost
   const baseUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000';
 
-  const response = await fetch(`${baseUrl}/api${endpoint}`, {
+  // Build fetch options
+  const fetchOptions: RequestInit = {
     ...options,
     headers: {
       'Content-Type': 'application/json',
       Cookie: cookieHeader,
       ...options.headers,
     },
-    // Ensure we don't cache authenticated requests inappropriately
-    cache: options.cache || 'no-store',
-  });
+    // Server cache + tag support
+    cache: options.cache || 'force-cache', // default now cached on server
+    next: options.tag
+      ? { tags: Array.isArray(options.tag) ? options.tag : [options.tag] }
+      : undefined,
+  };
+
+  const response = await fetch(`${baseUrl}/api${endpoint}`, fetchOptions);
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Request failed' }));
@@ -44,21 +49,19 @@ export type ApiResponse<T> = {
 
 /**
  * Server-side API fetch with error handling
- * Returns null on error instead of throwing
+ * Supports optional tags + caching
  */
 export async function serverApiFetch<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit & { tag?: string | string[]; cache?: 'no-store' | 'force-cache' | 'default' | 'reload' } = {}
 ): Promise<T | null> {
   try {
     const response = await serverFetch<ApiResponse<T>>(endpoint, options);
-    if (response.success && response.data) {
-      return response.data;
-    }
+    if (response.success && response.data) return response.data;
     console.error('API error:', response.error);
     return null;
-  } catch (error) {
-    console.error('Server fetch error:', error);
+  } catch (err) {
+    console.error('Server fetch error:', err);
     return null;
   }
 }
