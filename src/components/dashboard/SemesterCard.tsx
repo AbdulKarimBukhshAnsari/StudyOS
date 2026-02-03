@@ -9,8 +9,8 @@ import Link from 'next/link';
 interface SemesterCardProps {
   id: string;
   name: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: Date | string;
+  endDate: Date | string;
   isActive: boolean;
   subjectCount: number;
   href: string;

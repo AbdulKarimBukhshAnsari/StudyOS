@@ -1,14 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { BookOpen, FileText, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { deleteSubject } from '@/serverActions/semester/action';
+import { useDeleteSubject } from '@/hooks/useSemesterQueries';
 import { useToast } from '@/context/toastContext';
 
 interface SubjectCardProps {
@@ -30,10 +28,11 @@ export function SubjectCard({
   href,
   semesterId,
 }: SubjectCardProps) {
-  const router = useRouter();
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
   const progress = 50; // Default 50% as requested
+
+  // TanStack Query mutation - handles loading state and cache invalidation automatically
+  const deleteSubjectMutation = useDeleteSubject();
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -43,17 +42,21 @@ export function SubjectCard({
       return;
     }
 
-    setLoading(true);
-    const result = await deleteSubject(id, semesterId);
-    setLoading(false);
-
-    if (result.success) {
-      toast.success('Subject deleted successfully');
-      router.refresh();
-    } else {
-      toast.error(result.error || 'Failed to delete subject');
-    }
+    deleteSubjectMutation.mutate(
+      { subjectId: id, semesterId },
+      {
+        onSuccess: () => {
+          toast.success('Subject deleted successfully');
+          // No need for router.refresh() - TanStack Query invalidates the cache automatically!
+        },
+        onError: (error) => {
+          toast.error(error.message || 'Failed to delete subject');
+        },
+      }
+    );
   };
+
+  const loading = deleteSubjectMutation.isPending;
 
   return (
     <Card

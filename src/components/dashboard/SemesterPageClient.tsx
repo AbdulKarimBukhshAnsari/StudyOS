@@ -6,7 +6,7 @@ import { AddSubjectModal } from './AddSubjectModal';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Plus } from 'lucide-react';
-import type { SubjectWithTopicCount } from '@/serverActions/semester/action';
+import type { SubjectWithTopicCount } from '@/types/semester';
 import { routeHelpers } from '@/constants/routes';
 
 interface SemesterPageClientProps {

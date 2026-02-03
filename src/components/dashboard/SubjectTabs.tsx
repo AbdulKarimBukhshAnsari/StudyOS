@@ -4,14 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SubjectOverviewTab } from './SubjectOverviewTab';
 import { SubjectTopicsTab } from './SubjectTopicsTab';
 import { LayoutDashboard, HelpCircle, BookOpen } from 'lucide-react';
-
-interface Topic {
-  id: string;
-  name: string;
-  status: 'Not Clear' | 'Somewhat Clear' | 'Clear';
-  order_index: number;
-  created_at: Date;
-}
+import type { Topic } from '@/types/semester';
 
 interface SubjectTabsProps {
   subject: {
