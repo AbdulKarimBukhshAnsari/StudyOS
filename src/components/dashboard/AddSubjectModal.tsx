@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -14,8 +13,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { createSubject } from '@/serverActions/semester/action';
+import { useCreateSubject } from '@/hooks/useSemesterQueries';
 import { useToast } from '@/context/toastContext';
+import {useRouter} from 'next/navigation';
 
 interface AddSubjectModalProps {
   open: boolean;
@@ -28,14 +28,16 @@ export function AddSubjectModal({
   onOpenChange,
   semesterId,
 }: AddSubjectModalProps) {
-  const router = useRouter();
   const toast = useToast();
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     priority: 1,
   });
+
+  // TanStack Query mutation - handles loading state and cache invalidation automatically
+  const createSubjectMutation = useCreateSubject();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,31 +47,37 @@ export function AddSubjectModal({
       return;
     }
 
-    setLoading(true);
-    const result = await createSubject(semesterId, {
-      name: formData.name,
-      description: formData.description || undefined,
-      priority: formData.priority,
-    });
-
-    setLoading(false);
-
-    if (result.success) {
-      toast.success('Subject created successfully');
-      setFormData({ name: '', description: '', priority: 1 });
-      onOpenChange(false);
-      router.refresh();
-    } else {
-      toast.error(result.error || 'Failed to create subject');
-    }
+    createSubjectMutation.mutate(
+      {
+        semesterId,
+        data: {
+          name: formData.name,
+          description: formData.description || undefined,
+          priority: formData.priority,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success('Subject created successfully');
+          setFormData({ name: '', description: '', priority: 1 });
+          onOpenChange(false);
+          router.refresh();
+        },
+        onError: (error) => {
+          toast.error(error.message || 'Failed to create subject');
+        },
+      }
+    );
   };
 
   const handleClose = () => {
-    if (!loading) {
+    if (!createSubjectMutation.isPending) {
       setFormData({ name: '', description: '', priority: 1 });
       onOpenChange(false);
     }
   };
+
+  const loading = createSubjectMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>

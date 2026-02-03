@@ -1,18 +1,31 @@
-'use server';
+'use client';
 
 import type { BreadcrumbItem } from '@/components/dashboard/BreadcrumbNav';
-import { getUserSemesters } from '@/serverActions/semester/action';
-import { getSemesterWithSubjects, getSubjectById, getTopicById } from '@/serverActions/semester/action';
-import { cache } from 'react';
 import { ROUTES, routeHelpers } from '@/constants/routes';
+import {
+  useSemesters,
+  useSemester,
+  useSubjectsBySemester,
+  useSubject,
+  useTopic,
+} from '@/hooks/useSemesterQueries';
 
-/**
- * Generate breadcrumbs for the semesters list page
- */
-export const getSemestersBreadcrumbs = cache(async (): Promise<BreadcrumbItem[]> => {
-  const semesters = await getUserSemesters();
-  
-  return [
+export function useBreadcrumbs(
+  semesterId?: string,
+  subjectId?: string,
+  topicId?: string
+): BreadcrumbItem[] {
+  const { data: semesters = [] } = useSemesters();
+  const { data: semester } = useSemester(semesterId ?? '', {
+    enabled: !!semesterId,
+  });
+  const { data: subjects = [] } = useSubjectsBySemester(semesterId ?? '', {
+    enabled: !!semesterId,
+  });
+  const { data: subject } = useSubject(subjectId ?? '', { enabled: !!subjectId });
+  const { data: topic } = useTopic(topicId ?? '', { enabled: !!topicId });
+
+  const base: BreadcrumbItem[] = [
     {
       id: 'semesters',
       label: 'Semesters',
@@ -24,152 +37,38 @@ export const getSemestersBreadcrumbs = cache(async (): Promise<BreadcrumbItem[]>
       })),
     },
   ];
-});
 
-/**
- * Generate breadcrumbs for a semester detail page
- */
-export const getSemesterBreadcrumbs = cache(async (
-  semesterId: string
-): Promise<BreadcrumbItem[]> => {
-  const [semesters, semesterData] = await Promise.all([
-    getUserSemesters(),
-    getSemesterWithSubjects(semesterId),
-  ]);
+  if (!semesterId || !semester) return base;
 
-  if (!semesterData) {
-    return getSemestersBreadcrumbs();
-  }
+  const semesterCrumb: BreadcrumbItem = {
+    id: semesterId,
+    label: semester.name,
+    href: routeHelpers.semester(semesterId),
+    options: subjects.map((s) => ({
+      id: s.id,
+      label: s.name,
+      href: routeHelpers.subject(semesterId, s.id),
+    })),
+  };
 
-  const { subjects } = semesterData;
+  if (!subjectId || !subject) return [...base, semesterCrumb];
 
-  return [
-    {
-      id: 'semesters',
-      label: 'Semesters',
-      href: ROUTES.private.dashboardSemester,
-      options: semesters.map((s) => ({
-        id: s.id,
-        label: s.name,
-        href: routeHelpers.semester(s.id),
-      })),
-    },
-    {
-      id: semesterId,
-      label: semesterData.semester.name,
-      href: routeHelpers.semester(semesterId),
-      options: subjects.map((s) => ({
-        id: s.id,
-        label: s.name,
-        href: routeHelpers.subject(semesterId, s.id),
-      })),
-    },
-  ];
-});
+  const subjectCrumb: BreadcrumbItem = {
+    id: subjectId,
+    label: subject.name,
+    href: routeHelpers.subject(semesterId, subjectId),
+  };
 
-/**
- * Generate breadcrumbs for a subject detail page
- */
-export const getSubjectBreadcrumbs = cache(async (
-  semesterId: string,
-  subjectId: string
-): Promise<BreadcrumbItem[]> => {
-  const [semesters, semesterData] = await Promise.all([
-    getUserSemesters(),
-    getSemesterWithSubjects(semesterId),
-  ]);
-
-  if (!semesterData) {
-    return getSemestersBreadcrumbs();
-  }
-
-  const { semester, subjects } = semesterData;
-  const subject = subjects.find((s) => s.id === subjectId);
-
-  if (!subject) {
-    return getSemesterBreadcrumbs(semesterId);
-  }
+  if (!topicId || !topic) return [...base, semesterCrumb, subjectCrumb];
 
   return [
-    {
-      id: 'semesters',
-      label: 'Semesters',
-      href: ROUTES.private.dashboardSemester,
-      options: semesters.map((s) => ({
-        id: s.id,
-        label: s.name,
-        href: routeHelpers.semester(s.id),
-      })),
-    },
-    {
-      id: semesterId,
-      label: semester.name,
-      href: routeHelpers.semester(semesterId),
-      options: subjects.map((s) => ({
-        id: s.id,
-        label: s.name,
-        href: routeHelpers.subject(semesterId, s.id),
-      })),
-    },
-    {
-      id: subjectId,
-      label: subject.name,
-      href: routeHelpers.subject(semesterId, subjectId),
-    },
-  ];
-});
-
-/**
- * Generate breadcrumbs for a topic detail page
- */
-export const getTopicBreadcrumbs = cache(async (
-  semesterId: string,
-  subjectId: string,
-  topicId: string
-): Promise<BreadcrumbItem[]> => {
-  const [semesters, semesterData, subjectData, topic] = await Promise.all([
-    getUserSemesters(),
-    getSemesterWithSubjects(semesterId),
-    getSubjectById(subjectId, semesterId),
-    getTopicById(topicId, subjectId, semesterId),
-  ]);
-
-  if (!semesterData || !subjectData || !topic) {
-    return getSubjectBreadcrumbs(semesterId, subjectId);
-  }
-
-  const { semester, subjects } = semesterData;
-
-  return [
-    {
-      id: 'semesters',
-      label: 'Semesters',
-      href: ROUTES.private.dashboardSemester,
-      options: semesters.map((s) => ({
-        id: s.id,
-        label: s.name,
-        href: routeHelpers.semester(s.id),
-      })),
-    },
-    {
-      id: semesterId,
-      label: semester.name,
-      href: routeHelpers.semester(semesterId),
-      options: subjects.map((s) => ({
-        id: s.id,
-        label: s.name,
-        href: routeHelpers.subject(semesterId, s.id),
-      })),
-    },
-    {
-      id: subjectId,
-      label: subjectData.name,
-      href: routeHelpers.subject(semesterId, subjectId),
-    },
+    ...base,
+    semesterCrumb,
+    subjectCrumb,
     {
       id: topicId,
       label: topic.name,
       href: routeHelpers.topic(semesterId, subjectId, topicId),
     },
   ];
-});
+}
