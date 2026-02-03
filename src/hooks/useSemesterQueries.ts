@@ -119,11 +119,9 @@ export function useCreateSubject() {
       return { subject: response.data, semesterId };
     },
     onSuccess: ({ semesterId }) => {
-      // Invalidate subjects for this semester
       queryClient.invalidateQueries({
         queryKey: queryKeys.subjects.bySemester(semesterId),
       });
-      // Invalidate semesters to update subject count
       queryClient.invalidateQueries({ queryKey: queryKeys.semesters.all });
     },
   });

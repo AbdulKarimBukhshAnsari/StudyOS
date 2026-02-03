@@ -136,6 +136,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       })
       .returning();
     // Revalidate relevant cache tags
+    revalidateTag(`semester-${semesterId}` , 'max');
     revalidateTag(`subjects-semester-${semesterId}` , 'max');
 
     return NextResponse.json({

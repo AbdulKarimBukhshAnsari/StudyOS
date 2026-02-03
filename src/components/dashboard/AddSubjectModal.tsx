@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useCreateSubject } from '@/hooks/useSemesterQueries';
 import { useToast } from '@/context/toastContext';
+import {useRouter} from 'next/navigation';
 
 interface AddSubjectModalProps {
   open: boolean;
@@ -28,6 +29,7 @@ export function AddSubjectModal({
   semesterId,
 }: AddSubjectModalProps) {
   const toast = useToast();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -59,7 +61,7 @@ export function AddSubjectModal({
           toast.success('Subject created successfully');
           setFormData({ name: '', description: '', priority: 1 });
           onOpenChange(false);
-          // No need for router.refresh() - TanStack Query invalidates the cache automatically!
+          router.refresh();
         },
         onError: (error) => {
           toast.error(error.message || 'Failed to create subject');
