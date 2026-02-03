@@ -11,7 +11,7 @@ export async function serverFetch<T>(
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();
 
-  const baseUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
 
   // Build fetch options
   const fetchOptions: RequestInit = {
@@ -28,7 +28,7 @@ export async function serverFetch<T>(
       : undefined,
   };
 
-  const response = await fetch(`${baseUrl}/api${endpoint}`, fetchOptions);
+  const response = await fetch(`${baseUrl}/${endpoint}`, fetchOptions);
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Request failed' }));
