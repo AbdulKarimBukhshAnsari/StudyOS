@@ -22,6 +22,13 @@
       "when": 1767529958887,
       "tag": "0002_fast_thunderbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1770456853082,
+      "tag": "0003_rainy_loa",
+      "breakpoints": true
     }
   ]
 }

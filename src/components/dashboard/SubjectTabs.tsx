@@ -1,10 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PlaceholderBlock } from '@/components/ui/placeholder-block';
 import { SubjectOverviewTab } from './SubjectOverviewTab';
 import { SubjectTopicsTab } from './SubjectTopicsTab';
 import { LayoutDashboard, HelpCircle, BookOpen } from 'lucide-react';
 import type { Topic } from '@/types/semester';
+import { useSearchParams } from 'next/navigation';
 
 interface SubjectTabsProps {
   subject: {
@@ -21,8 +24,12 @@ interface SubjectTabsProps {
 }
 
 export function SubjectTabs({ subject, subjectId, topics }: SubjectTabsProps) {
+  const searchParams = useSearchParams();
+  const isTopic = searchParams.get('isTopic') === 'true';
+  const [activeTab, setActiveTab] = useState(isTopic ? 'topics' : 'overview');
+
   return (
-    <Tabs defaultValue="overview" className="w-full">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="w-full justify-start bg-muted/50 p-1 h-auto rounded-lg border">
         <TabsTrigger 
           value="overview" 
@@ -52,17 +59,12 @@ export function SubjectTabs({ subject, subjectId, topics }: SubjectTabsProps) {
       </TabsContent>
       
       <TabsContent value="quiz" className="mt-8">
-        <div className="text-center py-16 border border-dashed rounded-xl bg-muted/30">
-          <div className="max-w-md mx-auto">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-500/10 flex items-center justify-center">
-              <HelpCircle className="h-8 w-8 text-purple-600" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Quiz Coming Soon</h3>
-            <p className="text-sm text-muted-foreground">
-              Quiz functionality will be available here soon. You&apos;ll be able to test your knowledge and track your progress.
-            </p>
-          </div>
-        </div>
+        <PlaceholderBlock
+          icon={HelpCircle}
+          title="Quiz Coming Soon"
+          description="Quiz functionality will be available here soon. You'll be able to test your knowledge and track your progress."
+          iconClassName="text-purple-600"
+        />
       </TabsContent>
       
       <TabsContent value="topics" className="mt-8">

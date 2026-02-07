@@ -4,6 +4,7 @@ import { GraduationCap, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { SemesterCard } from '@/components/dashboard/SemesterCard';
+import { EmptyStateCard } from '@/components/ui/empty-state-card';
 import { Card, CardContent } from '@/components/ui/card';
 import { routeHelpers } from '@/constants/routes';
 import { useSemesters } from '@/hooks/useSemesterQueries';
@@ -76,23 +77,17 @@ export function SemesterListClient() {
 
       <div className="flex-1 overflow-y-auto p-6">
         {list.length === 0 ? (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <div className="max-w-md mx-auto">
-                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center">
-                  <GraduationCap className="h-10 w-10 text-purple-600" />
-                </div>
-                <h3 className="text-2xl font-semibold mb-2">No Semesters Yet</h3>
-                <p className="text-muted-foreground mb-6">
-                  Get started by creating your first semester. Organize your courses, track your progress, and stay on top of your academic goals.
-                </p>
-                <Button className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
-                  <Plus className="h-5 w-5" />
-                  Create Your First Semester
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <EmptyStateCard
+            icon={GraduationCap}
+            iconContainerClassName="w-20 h-20 mb-6 bg-gradient-to-br from-purple-500/20 to-purple-600/10"
+            iconClassName="h-10 w-10 text-purple-600"
+            title="No Semesters Yet"
+            description="Get started by creating your first semester. Organize your courses, track your progress, and stay on top of your academic goals."
+            actionLabel="Create Your First Semester"
+            actionIcon={Plus}
+            onAction={() => {}}
+            actionClassName="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {list.map((semester) => (
