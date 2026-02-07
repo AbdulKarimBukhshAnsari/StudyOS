@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, CreditCard, HelpCircle, ArrowLeft } from 'lucide-react';
+import { PlaceholderBlock } from '@/components/ui/placeholder-block';
+import { NotesTabContent } from '@/components/dashboard/NotesTabContent';
 import { cn } from '@/lib/utils';
 import { useUpdateTopicStatus } from '@/hooks/useSemesterQueries';
 import { useToast } from '@/context/toastContext';
@@ -71,7 +73,9 @@ export function TopicWorkspace({
   const statusLoading = updateStatusMutation.isPending;
 
   const handleBack = () => {
-    router.push(routeHelpers.subject(semesterId, subjectId));
+    const path = routeHelpers.subject(semesterId, subjectId);
+    const params = new URLSearchParams({isTopic: 'true'});
+    router.push(`${path}?${params.toString()}`);
   };
 
   return (
@@ -205,30 +209,15 @@ export function TopicWorkspace({
         </div>
         
         <TabsContent value="notes" className="mt-6">
-          <div className="min-h-[400px] flex items-center justify-center border border-dashed rounded-lg bg-muted/20">
-            <div className="text-center">
-              <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">Notes functionality coming soon</p>
-            </div>
-          </div>
+          <NotesTabContent topicId={topicId} />
         </TabsContent>
         
         <TabsContent value="flashcard" className="mt-6">
-          <div className="min-h-[400px] flex items-center justify-center border border-dashed rounded-lg bg-muted/20">
-            <div className="text-center">
-              <CreditCard className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">FlashCard functionality coming soon</p>
-            </div>
-          </div>
+          <PlaceholderBlock icon={CreditCard} title="FlashCard functionality coming soon" />
         </TabsContent>
         
         <TabsContent value="quiz" className="mt-6">
-          <div className="min-h-[400px] flex items-center justify-center border border-dashed rounded-lg bg-muted/20">
-            <div className="text-center">
-              <HelpCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">Quiz functionality coming soon</p>
-            </div>
-          </div>
+          <PlaceholderBlock icon={HelpCircle} title="Quiz functionality coming soon" />
         </TabsContent>
       </Tabs>
     </div>

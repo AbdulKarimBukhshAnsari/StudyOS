@@ -30,14 +30,21 @@ export const queryKeys = {
   topics: {
     /** All topics queries - use for broad invalidation */
     all: ['topics'] as const,
-    
+
     /** Topics for a specific subject */
-    bySubject: (subjectId: string) => 
+    bySubject: (subjectId: string) =>
       [...queryKeys.topics.all, 'subject', subjectId] as const,
-    
+
     /** Single topic by ID */
     detail: (id: string) => [...queryKeys.topics.all, 'detail', id] as const,
   },
+
+  notes: {
+    all: ['notes'] as const,
+    byTopic: (topicId: string) => [...queryKeys.notes.all, 'topic', topicId] as const,
+    detail: (id: string) => [...queryKeys.notes.all, 'detail', id] as const,
+  },
+
   onboarding: {
     all: ['onboarding'] as const,
     status: () => [...queryKeys.onboarding.all, 'status'] as const,

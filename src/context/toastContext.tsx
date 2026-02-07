@@ -25,28 +25,28 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const success = (message: string, description?: string) => {
     sonnerToast.success(message, {
       description,
-      duration: 6000,
+      duration: 3000,
     });
   };
 
   const error = (message: string, description?: string) => {
     sonnerToast.error(message, {
       description,
-      duration: 6000,
+      duration: 3000,
     });
   };
 
   const info = (message: string, description?: string) => {
     sonnerToast.info(message, {
       description,
-      duration: 6000,
+      duration: 3000,
     });
   };
 
   const warning = (message: string, description?: string) => {
     sonnerToast.warning(message, {
       description,
-      duration: 6000,
+      duration: 3000,
     });
   };
 

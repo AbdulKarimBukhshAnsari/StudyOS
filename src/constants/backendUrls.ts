@@ -27,5 +27,14 @@ export const API_URLS = {
   topics: {
     getById: (id: string) => `/topics/${id}`,
     updateStatus: (id: string) => `/topics/${id}/status`,
+    getNotes: (topicId: string) => `/topics/${topicId}/notes`,
+    createNote: (topicId: string) => `/topics/${topicId}/notes`,
+  },
+
+  // Notes
+  notes: {
+    getById: (id: string) => `/notes/${id}`,
+    update: (id: string) => `/notes/${id}`,
+    delete: (id: string) => `/notes/${id}`,
   },
 } as const;
