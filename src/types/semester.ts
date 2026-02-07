@@ -44,6 +44,15 @@ export interface Topic {
 
 export type TopicStatus = Topic['status'];
 
+export interface Note {
+  id: string;
+  topic_id: string;
+  topic_name: string;
+  content: string;
+  ai_refined: boolean;
+  created_at: string;
+}
+
 // API Response wrapper
 export type ApiResponse<T> = {
   success: boolean;

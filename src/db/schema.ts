@@ -58,6 +58,7 @@ export const tests = pgTable('tests', {
 // Note table
 export const notes = pgTable('notes', {
   id: uuid('id').defaultRandom().primaryKey(),
+  topic_name: varchar('topic_name', { length: 255 }).notNull(),
   topic_id: uuid('topic_id').notNull().references(() => topics.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
   ai_refined: boolean('ai_refined').default(false).notNull(),
