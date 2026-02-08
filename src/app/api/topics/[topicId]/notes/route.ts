@@ -3,7 +3,7 @@ import { db } from '@/db';
 import { notes, topics, subjects, semesters } from '@/db/schema';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, asc } from 'drizzle-orm';
 
 interface RouteParams {
   params: Promise<{ topicId: string }>;
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       })
       .from(notes)
       .where(eq(notes.topic_id, topicId))
-      .orderBy(desc(notes.created_at));
+      .orderBy(asc(notes.created_at));
     return NextResponse.json({ success: true, data: list });
   } catch (error) {
     console.error('Error fetching notes:', error);
