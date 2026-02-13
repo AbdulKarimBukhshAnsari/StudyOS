@@ -8,6 +8,7 @@ import { AddSubjectButton } from '@/components/dashboard/AddSubjectButton';
 import { SemesterProvider } from '@/context/semesterContext';
 import { useBreadcrumbs } from '@/hooks/useBreadcrumbs';
 import { useSemesterWithSubjects, useSemesters } from '@/hooks/useSemesterQueries';
+import { SemesterDetailSkeleton } from '@/components/skeleton';
 
 interface SemesterDetailClientProps {
   semesterId: string;
@@ -24,14 +25,8 @@ export function SemesterDetailClient({ semesterId }: SemesterDetailClientProps) 
     }
   }, [isLoading, isError, semester]);
 
-  if (isLoading) {
-    return (
-      <div className="h-full flex flex-col">
-        <DashboardHeader subtitle="Loading..." />
-        <div className="flex-1 overflow-y-auto p-6 animate-pulse" />
-      </div>
-    );
-  }
+  // Same skeleton as route loading so no flash when client fetches finish
+  if (isLoading) return <SemesterDetailSkeleton />;
 
   if (isError || !semester) {
     notFound();

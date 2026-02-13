@@ -8,34 +8,13 @@ import { EmptyStateCard } from '@/components/ui/empty-state-card';
 import { Card, CardContent } from '@/components/ui/card';
 import { routeHelpers } from '@/constants/routes';
 import { useSemesters } from '@/hooks/useSemesterQueries';
+import { SemesterListSkeleton } from '@/components/skeleton';
 
 export function SemesterListClient() {
   const { data: semesters, isLoading, isError, error } = useSemesters();
 
-  if (isLoading) {
-    return (
-      <div className="h-full flex flex-col">
-        <DashboardHeader
-          title={
-            <span className="bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
-              <GraduationCap className="h-6 w-6" />
-              Semester Management
-            </span>
-          }
-          subtitle="Organize and manage your academic semesters"
-        />
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="animate-pulse">
-                <CardContent className="p-6 h-32" />
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Reuse route skeleton so loading state matches loading.tsx and avoids visual jump
+  if (isLoading) return <SemesterListSkeleton />;
 
   if (isError) {
     return (

@@ -264,6 +264,7 @@ export function useUpdateTopicStatus() {
 }
 
 
+// Fetches semester + subjects in parallel (no waterfall); both needed before showing content
 export function useSemesterWithSubjects(semesterId: string) {
   const semesterQuery = useSemester(semesterId);
   const subjectsQuery = useSubjectsBySemester(semesterId);
