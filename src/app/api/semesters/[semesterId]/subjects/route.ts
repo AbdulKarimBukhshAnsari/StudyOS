@@ -30,7 +30,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const { semesterId } = await params;
     const userId = session.user.id;
 
-    // Verify semester ownership
+    // Single ownership check; could be merged with subjects query to save one round-trip if needed
     const [semester] = await db
       .select()
       .from(semesters)

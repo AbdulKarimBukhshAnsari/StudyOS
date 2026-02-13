@@ -7,7 +7,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Ensure user is authenticated and onboarded
+  // Cached per request (userContext); avoids duplicate auth/DB calls in same render
   await requireAuthAndOnboarding();
 
   return (
