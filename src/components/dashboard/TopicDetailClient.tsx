@@ -13,6 +13,7 @@ import {
   useTopic,
   useTopicsBySubject,
 } from '@/hooks/useSemesterQueries';
+import { TopicPageSkeleton } from '@/components/skeleton';
 
 interface TopicDetailClientProps {
   semesterId: string;
@@ -41,14 +42,8 @@ export function TopicDetailClient({
     }
   }, [isLoading, semester, subject, topic]);
 
-  if (isLoading) {
-    return (
-      <div className="h-full flex flex-col">
-        <DashboardHeader subtitle="Loading..." />
-        <div className="flex-1 overflow-y-auto p-6 animate-pulse" />
-      </div>
-    );
-  }
+  // Reuse route skeleton so no white flash after loading.tsx
+  if (isLoading) return <TopicPageSkeleton />;
 
   if (!semester || !subject || !topic) {
     notFound();
