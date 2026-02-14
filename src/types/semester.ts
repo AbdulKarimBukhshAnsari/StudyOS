@@ -53,6 +53,36 @@ export interface Note {
   created_at: string;
 }
 
+export interface QuizQuestion {
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
+}
+
+export interface Quiz {
+  id: string;
+  topic_id: string;
+  name: string;
+  notes_ids: string[];
+  questions: QuizQuestion[];
+  created_at: string;
+}
+
+export interface QuizAnswer {
+  questionId: string;
+  selectedAnswer: number;
+}
+
+export interface QuizResult {
+  id: string;
+  quiz_id: string;
+  user_id: string;
+  score: number;
+  answers: QuizAnswer[];
+  created_at: string;
+}
+
 // API Response wrapper
 export type ApiResponse<T> = {
   success: boolean;

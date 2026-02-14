@@ -29,6 +29,20 @@
       "when": 1770456853082,
       "tag": "0003_rainy_loa",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1771046525083,
+      "tag": "0004_unique_chronomancer",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1771047272666,
+      "tag": "0005_fine_morlocks",
+      "breakpoints": true
     }
   ]
 }

@@ -29,6 +29,13 @@ export const API_URLS = {
     updateStatus: (id: string) => `/topics/${id}/status`,
     getNotes: (topicId: string) => `/topics/${topicId}/notes`,
     createNote: (topicId: string) => `/topics/${topicId}/notes`,
+    getQuizzes: (topicId: string) => `/topics/${topicId}/quizzes`,
+    createQuiz: (topicId: string) => `/topics/${topicId}/quizzes`,
+    deleteQuiz: (topicId: string) => `/topics/${topicId}/quizzes`,
+    getQuizResults: (topicId: string, quizId: string) =>
+      `/topics/${topicId}/quizzes/${quizId}/results`,
+    saveQuizResult: (topicId: string, quizId: string) =>
+      `/topics/${topicId}/quizzes/${quizId}/results`,
   },
 
   // Notes

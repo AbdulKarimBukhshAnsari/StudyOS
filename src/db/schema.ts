@@ -79,7 +79,7 @@ type QuizQuestion = {
   question: string;
   options: string[];
   correctAnswer: number;
-  explanation?: string;
+  explanation: string;
 };
 
 type QuizAnswer = {
@@ -91,6 +91,8 @@ type QuizAnswer = {
 export const quizzes = pgTable('quizzes', {
   id: uuid('id').defaultRandom().primaryKey(),
   topic_id: uuid('topic_id').notNull().references(() => topics.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  notes_ids : jsonb('notes_ids').$type<string[]>().default([]),
   questions: jsonb('questions').$type<QuizQuestion[]>().notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
 });
