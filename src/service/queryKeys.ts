@@ -45,6 +45,13 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.notes.all, 'detail', id] as const,
   },
 
+  quizzes: {
+    all: ['quizzes'] as const,
+    byTopic: (topicId: string) => [...queryKeys.quizzes.all, 'topic', topicId] as const,
+    results: (topicId: string, quizId: string) =>
+      [...queryKeys.quizzes.all, 'results', topicId, quizId] as const,
+  },
+
   onboarding: {
     all: ['onboarding'] as const,
     status: () => [...queryKeys.onboarding.all, 'status'] as const,

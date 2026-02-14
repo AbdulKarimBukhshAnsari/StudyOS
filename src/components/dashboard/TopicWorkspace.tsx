@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, CreditCard, HelpCircle, ArrowLeft } from 'lucide-react';
 import { PlaceholderBlock } from '@/components/ui/placeholder-block';
 import { NotesTabContent } from '@/components/dashboard/NotesTabContent';
+import { QuizTabContent } from '@/components/dashboard/QuizTabContent';
 import { cn } from '@/lib/utils';
 import { useUpdateTopicStatus } from '@/hooks/useSemesterQueries';
 import { useToast } from '@/context/toastContext';
@@ -217,7 +218,7 @@ export function TopicWorkspace({
         </TabsContent>
         
         <TabsContent value="quiz" className="mt-6">
-          <PlaceholderBlock icon={HelpCircle} title="Quiz functionality coming soon" />
+          <QuizTabContent topicId={topicId} />
         </TabsContent>
       </Tabs>
     </div>
